@@ -1,5 +1,8 @@
-/* 기본값: 다크 테마 */
+/* =========================================
+   1. 테마 변수 설정 (Theme Variables)
+   ========================================= */
 :root {
+    /* 기본값: 다크 테마 */
     --bg-main: #0f1115;
     --card-bg: #1a1d23;
     --border-color: #2d3139;
@@ -11,8 +14,8 @@
     --badge-bg: rgba(56, 189, 248, 0.1);
 }
 
-/* 라이트 테마 변수 오버라이드 */
 [data-theme="light"] {
+    /* 라이트 테마 */
     --bg-main: #f8f9fa;
     --card-bg: #ffffff;
     --border-color: #dee2e6;
@@ -21,78 +24,165 @@
     --accent: #007bff;
     --modal-bg: rgba(0, 0, 0, 0.5);
     --input-bg: #ffffff;
-    --badge-bg: rgba(0, 123, 255, 0.1); /* 라이트 모드용 강조 배경 */
+    --badge-bg: rgba(0, 123, 255, 0.1);
 }
 
+/* =========================================
+   2. 기본 스타일 (Base Styles)
+   ========================================= */
 body { 
     font-family: 'Inter', 'Pretendard', sans-serif; 
-    background-color: var(--bg-main); color: var(--text-main); 
-    margin: 0; padding: 0; letter-spacing: -0.02em;
+    background-color: var(--bg-main); 
+    color: var(--text-main); 
+    margin: 0; 
+    padding: 0; 
+    letter-spacing: -0.02em;
     transition: background-color 0.3s, color 0.3s;
+    line-height: 1.6;
 }
 
-/* 네비게이션 */
+* {
+    box-sizing: border-box; /* 모든 요소의 크기 계산 방식 통일 */
+}
+
+/* =========================================
+   3. 네비게이션 & 레이아웃 (Layout)
+   ========================================= */
 .navbar { 
     background: var(--card-bg) !important;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 0;
 }
-.navbar-brand { font-weight: 800; font-size: 1.2rem; color: var(--accent) !important; text-decoration: none; }
 
-/* 레이아웃 */
-.main-container { max-width: 1100px; margin: 60px auto; padding: 0 20px; }
-.main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 30px; align-items: start; }
+.navbar-brand { 
+    font-weight: 800; 
+    font-size: 1.2rem; 
+    color: var(--accent) !important; 
+    text-decoration: none; 
+}
 
-/* 카드 공통 */
+.main-container { 
+    max-width: 1100px; 
+    margin: 60px auto; 
+    padding: 0 20px; 
+}
+
+.main-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 320px; 
+    gap: 30px; 
+    align-items: start; 
+}
+
+/* =========================================
+   4. 카드 및 컴포넌트 (Components)
+   ========================================= */
 .job-card, .login-card { 
-    background: var(--card-bg); border: 1px solid var(--border-color);
-    border-radius: 8px; transition: all 0.2s;
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color);
+    border-radius: 12px; /* 조금 더 부드러운 느낌으로 수정 */
+    transition: all 0.2s;
 }
-.job-card:hover { border-color: var(--accent); transform: translateX(4px); }
 
-/* 아이콘 박스 */
+.job-card:hover { 
+    border-color: var(--accent); 
+    transform: translateX(4px); 
+}
+
 .icon-box {
-    width: 44px; height: 44px; background: var(--badge-bg);
-    color: var(--accent); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
+    width: 44px; 
+    height: 44px; 
+    background: var(--badge-bg);
+    color: var(--accent); 
+    border-radius: 8px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
 }
 
-/* 상태 배지 */
 .status-badge { 
-    font-size: 0.65rem; font-weight: 700; padding: 2px 8px; 
-    border-radius: 4px; border: 1px solid transparent; text-transform: uppercase; 
+    font-size: 0.65rem; 
+    font-weight: 700; 
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    border: 1px solid transparent; 
+    text-transform: uppercase; 
 }
+
 .status-done { border-color: #22c55e; color: #22c55e; background: rgba(34, 197, 94, 0.1); }
 .status-ing { border-color: #8b5cf6; color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
 .status-waiting { border-color: #f59e0b; color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
 
-/* 입력창 */
-.login-card { padding: 24px; position: sticky; top: 100px; }
-input[type="text"], input[type="password"] {
-    width: 100%; padding: 12px; margin-bottom: 12px;
-    background: var(--input-bg); border: 1px solid var(--border-color);
-    border-radius: 6px; color: var(--text-main); box-sizing: border-box;
+/* =========================================
+   5. 입력창 스타일 (Inputs) - 핵심 수정 부분
+   ========================================= */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="url"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 5px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    outline: none;
+    display: block; /* 줄바꿈 확실히 적용 */
 }
 
-/* 버튼 */
+/* 포커스 효과 */
+input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* 플레이스홀더 스타일 */
+::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* =========================================
+   6. 버튼 스타일 (Buttons)
+   ========================================= */
 .btn-primary-custom, .btn-add { 
-    background: var(--accent); color: #fff; border: none; 
-    padding: 10px 18px; border-radius: 6px; font-weight: 700; cursor: pointer; 
+    background: var(--accent); 
+    color: #fff; 
+    border: none; 
+    padding: 12px 20px; 
+    border-radius: 8px; 
+    font-weight: 700; 
+    cursor: pointer;
+    transition: all 0.2s;
 }
-/* 다크모드일 때만 버튼 글자색을 검정으로 (가독성) */
-[data-theme="dark"] .btn-primary-custom, [data-theme="dark"] .btn-add { color: #000; }
 
-.theme-toggle {
-    background: none; border: 1px solid var(--border-color); color: var(--text-main);
-    padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+.btn-primary-custom:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* 다크모드 가독성 패치 */
+[data-theme="dark"] .btn-primary-custom, 
+[data-theme="dark"] .btn-add { 
+    color: #0f1115; /* 다크모드에서 배경이 밝은 파란색이므로 글자는 어둡게 */
 }
 
 .btn-detail {
-    background: transparent; border: 1px solid var(--border-color);
-    color: var(--text-main); font-size: 0.75rem; font-weight: 600;
-    padding: 6px 12px; border-radius: 6px; cursor: pointer;
-    transition: all 0.2s ease; white-space: nowrap;
+    background: transparent; 
+    border: 1px solid var(--border-color);
+    color: var(--text-main); 
+    font-size: 0.75rem; 
+    font-weight: 600;
+    padding: 8px 14px; 
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: all 0.2s ease; 
+    white-space: nowrap;
 }
 
 .btn-detail:hover {
@@ -101,3 +191,146 @@ input[type="text"], input[type="password"] {
     color: var(--accent);
     transform: translateY(-2px);
 }
+
+.theme-toggle {
+    background: var(--card-bg); 
+    border: 1px solid var(--border-color); 
+    color: var(--text-main);
+    padding: 8px 16px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+}
+
+/* =========================================
+   7. 사이드바 로그인 폼 교정 (Sidebar Fix)
+   ========================================= */
+.login-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 입력창 사이의 간격 균등 배분 */
+}
+
+.login-card h3, .login-card h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 사이드바 내의 input 마진 조정 */
+.login-card input {
+    margin-top: 0 !important; /* 전역 설정된 margin-top 제거 */
+}
+
+/* 로그인 버튼 너비 및 마진 조정 */
+.login-card .btn-primary-custom, 
+.login-card button[type="submit"] {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+}
+
+/* 사이드바 텍스트 레이블 (있을 경우) */
+.login-card .field-label {
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+}
+
+/* 서비스 카드 전용 호버 효과 */
+.service-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.service-card:hover {
+    border-color: var(--accent);
+    background: var(--bg-main); /* 살짝 배경색 변화 */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 실시간 크롤링 그리드 */
+.crawling-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 15px;
+}
+
+.crawl-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.crawl-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.crawl-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* 사이트별 고유 컬러 */
+.tag-wanted { background: #258bf7; color: #fff; }
+.tag-saramin { background: #ff5b00; color: #fff; }
+.tag-jobkorea { background: #0048ff; color: #fff; }
+.tag-jobplanet { background: #00c362; color: #fff; }
+
+.crawl-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.crawl-company {
+    margin: 5px 0 10px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.crawl-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+
+/* 상단 필터 칩 스타일 */
+.site-chip {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.chip-jobkorea:hover { border-color: #0048ff; color: #0048ff; }
+.chip-saramin:hover { border-color: #ff5b00; color: #ff5b00; }
+.chip-wanted:hover { border-color: #258bf7; color: #258bf7; }
+.chip-jobplanet:hover { border-color: #00c362; color: #00c362; }

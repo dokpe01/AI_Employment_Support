@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/{{ kit_id }}.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .login-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .login-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fa-brands fa-openai"></i>
+            <h2 style="font-weight: 800; margin: 0;">AI Employment Support</h2>
+            <p style="color: var(--text-muted); margin-top: 5px;">사용자 맞춤형 AI 취업지원 솔루션 서비스</p>
+        </div>
+
+        <div class="login-card" style="position: static; padding: 40px;">
+            <h4 style="color: var(--accent); margin-bottom: 25px; text-align: center;">
+                <i class="fa-solid fa-user-lock me-2"></i> Login
+            </h4>
+            
+            <form action="/login" method="post">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Access ID</label>
+                    <input type="text" name="username" placeholder="아이디를 입력하세요" required>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Passcode</label>
+                    <input type="password" name="password" placeholder="비밀번호를 입력하세요" required>
+                </div>
+
+                <button type="submit" class="btn-primary-custom" style="width: 100%; padding: 14px; font-size: 1rem;">
+                    로그인
+                </button>
+            </form>
+
+            <div class="login-footer">
+                계정이 없으신가요? <a href="/signup">회원가입</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fa-solid fa-moon"></i> 테마 변경
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-moon"></i> 테마 변경' : '<i class="fa-solid fa-sun"></i> 테마 변경';
+    });
+
+    if (localStorage.getItem('theme') === 'light') {
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i> 테마 변경';
+    }
+</script>
+</body>
+</html>

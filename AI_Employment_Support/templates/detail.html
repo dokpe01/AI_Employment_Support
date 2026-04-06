@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ job.company }} - AI 상세 분석</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    </head>
+<body>
+
+<nav class="navbar">
+    <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 20px; padding: 0 20px;">
+        <a href="/" style="color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> 뒤로가기</a>
+        <span style="font-weight: 800;">공고 상세 분석</span>
+    </div>
+</nav>
+
+<div class="main-container" style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+    
+    <header style="margin-bottom: 40px;">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+            <span class="status-badge status-done">{{ job.status }}</span>
+            <span style="color: var(--accent); font-weight: 700;">{{ job.role }}</span>
+        </div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0 0 10px 0;">{{ job.company }}</h1>
+        <p style="font-size: 1.2rem; color: var(--text-muted);">{{ job.title }}</p>
+    </header>
+
+    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 30px;">
+        
+        <div style="display: flex; flex-direction: column; gap: 25px;">
+            
+            <section class="job-card" style="padding: 30px; border: 2px solid var(--accent);">
+                <h3 style="margin-top: 0;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI 매칭 리포트</h3>
+                <div style="display: flex; align-items: center; gap: 40px; margin-top: 20px;">
+                    <div style="position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 8px solid var(--accent); background: rgba(56, 189, 248, 0.05);">
+                        <span style="font-size: 1.8rem; font-weight: 800; color: var(--accent);">88<small>%</small></span>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 10px 0;">합격 가능성 상위 12%</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                            사용자님의 <strong>Python, FastAPI</strong> 숙련도가 해당 기업의 기술 요구사항과 95% 일치합니다. 
+                            프로젝트 경험 중 'RecruitFlow Pro'가 가산점 요소로 분석되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="job-card" style="padding: 25px;">
+                <h4 style="margin-top: 0;">핵심 역량 분석</h4>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span>기술 스택 일치도</span>
+                            <span style="color: var(--accent);">매우 높음</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden;">
+                            <div style="width: 95%; height: 100%; background: var(--accent);"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px;">
+                            <span>산업군 이해도</span>
+                            <span style="color: #ff9800;">보통</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden;">
+                            <div style="width: 60%; height: 100%; background: #ff9800;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="job-card" style="padding: 25px;">
+                <h4 style="margin-top: 0;">채용 공고 상세</h4>
+                <div style="color: var(--text-main); line-height: 1.8; font-size: 0.95rem; margin-top: 20px;">
+                    {{ job.description | safe }} </div>
+            </section>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="login-card" style="position: sticky; top: 100px;">
+                <h5 style="margin-top: 0;">지원 준비하기</h5>
+                <button class="btn-primary-custom" style="width: 100%; margin-bottom: 10px;">
+                    <i class="fa-solid fa-paper-plane"></i> 즉시 지원하기
+                </button>
+                <button class="btn-detail" style="width: 100%; justify-content: center; background: var(--card-bg);">
+                    <i class="fa-solid fa-bookmark"></i> 공고 저장
+                </button>
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+                    AI가 분석한 면접 예상 질문 5개가 준비되어 있습니다.
+                </p>
+                <button onclick="location.href='/interview'" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--accent); background: none; color: var(--accent); font-weight: 700; cursor: pointer;">
+                    예상 면접 연습하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

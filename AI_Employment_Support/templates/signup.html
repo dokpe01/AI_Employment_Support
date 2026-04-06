@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - AI Employment Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/{{ kit_id }}.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 550px; /* 필드가 많아 너비를 조금 넓게 조정 */
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .field-label {
+            display: block; 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 480px) {
+            .input-row { grid-template-columns: 1fr; }
+        }
+        .login-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .login-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        #id-check-msg {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            display: block;
+        }
+        .required-mark {
+            color: #f87171;
+            margin-left: 4px;
+            font-size: 0.8rem;
+        }
+        .optional-mark {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 4px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+        .check-item input[type="checkbox"] {
+            width: 16px; height: 16px; cursor: pointer;
+        }
+        .category-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        .category-item:hover { background: var(--bg-main); color: var(--accent); }
+        .category-item.active { background: var(--bg-main); color: var(--accent); font-weight: 800; }
+
+        .sub-group { display: flex; flex-direction: column; gap: 12px; }
+        
+        .role-tag {
+            background: var(--badge-bg);
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fa-brands fa-openai"></i>
+            <h2 style="font-weight: 800; margin: 0;">Create Account</h2>
+            <p style="color: var(--text-muted); margin-top: 5px;">사용자 맞춤형 AI 취업지원 솔루션 서비스</p>
+        </div>
+
+        <div class="login-card" style="position: static; padding: 40px;">
+            <h4 style="color: var(--accent); margin-bottom: 25px; text-align: center;">
+                <i class="fa-solid fa-user-plus me-2"></i> 회원가입
+            </h4>
+            
+            <form action="/signup" method="post" onsubmit="return validateForm()">
+                <div class="input-row">
+                    <div>
+                        <label class="field-label">성함<span class="required-mark">*</span></label>
+                        <input type="text" name="full_name" placeholder="홍길동" required>
+                    </div>
+                    <div>
+                        <label class="field-label">이메일<span class="required-mark">*</span></label>
+                        <input type="email" name="email" placeholder="example@mail.com" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label class="field-label">계정<span class="required-mark">*</span></label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="username" name="username" placeholder="사용할 아이디" style="flex: 1;" required>
+                        <button type="button" onclick="checkUsername()" class="btn-detail" style="white-space: nowrap; padding: 0 15px;">중복확인</button>
+                    </div>
+                    <small id="id-check-msg"></small>
+                </div>
+
+                <div class="input-row">
+                    <div>
+                        <label class="field-label">비밀번호<span class="required-mark">*</span></label>
+                        <input type="password" id="password" name="password" placeholder="비밀번호" required>
+                    </div>
+                    <div>
+                        <label class="field-label">비밀번호 확인<span class="required-mark">*</span></label>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="비밀번호 확인" required>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div>
+                        <label class="field-label">전화번호<span class="required-mark">*</span></label>
+                        <input type="tel" name="phone" placeholder="- 없이 숫자만 입력" required>
+                    </div>
+                    <div>
+                        <label class="field-label">거주지<span class="required-mark">*</span></label>
+                        <input type="text" name="location" placeholder="서울시 강남구 논현동 195-2" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label class="field-label">희망직무 (복수 선택 가능)<span class="required-mark">*</span></label>
+                    
+                    <div id="selected-roles-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                        </div>
+
+                    <div class="role-selector-wrapper" style="display: grid; grid-template-columns: 180px 1fr; border: 1px solid var(--border-color); border-radius: 8px; height: 300px; background: var(--bg-main); overflow: hidden;">
+                        
+                        <div class="category-list" style="border-right: 1px solid var(--border-color); overflow-y: auto; background: var(--card-bg);">
+                            <div class="category-item active" onclick="showSubCategory('dev')">AI·개발·데이터</div>
+                            <div class="category-item" onclick="showSubCategory('plan')">기획·전략</div>
+                            <div class="category-item" onclick="showSubCategory('design')">디자인</div>
+                            <div class="category-item" onclick="showSubCategory('marketing')">마케팅·광고</div>
+                        </div>
+
+                        <div class="sub-category-list" style="padding: 15px; overflow-y: auto;">
+                            <div id="sub-dev" class="sub-group">
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="백엔드 개발자" onchange="toggleRoleTag(this)"> 백엔드 개발자</label>
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="프론트엔드 개발자" onchange="toggleRoleTag(this)"> 프론트엔드 개발자</label>
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="웹 기획자" onchange="toggleRoleTag(this)"> 웹 기획자</label>
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="데이터 엔지니어" onchange="toggleRoleTag(this)"> 데이터 엔지니어</label>
+                            </div>
+                            
+                            <div id="sub-plan" class="sub-group" style="display: none;">
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="경영기획" onchange="toggleRoleTag(this)"> 경영기획</label>
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="서비스기획" onchange="toggleRoleTag(this)"> 서비스기획</label>
+                                <label class="check-item"><input type="checkbox" name="desired_role" value="PM/PO" onchange="toggleRoleTag(this)"> PM/PO</label>
+                            </div>
+                            
+                            </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="field-label">보유 스킬<span class="optional-mark">(선택 - 쉼표로 구분)</span></label>
+                    <input type="text" name="skills" list="skill-hints" placeholder="입력 시 추천 키워드가 나타납니다" style="width: 100%;">
+                    
+                    <datalist id="skill-hints">
+                        <option value="Python"></option>
+                        <option value="FastAPI"></option>
+                        <option value="Java"></option>
+                        <option value="Spring Boot"></option>
+                        <option value="React.js"></option>
+                        <option value="Vue.js"></option>
+                        <option value="MySQL"></option>
+                        <option value="PostgreSQL"></option>
+                        <option value="Docker"></option>
+                        <option value="Kubernetes"></option>
+                        <option value="AWS"></option>
+                    </datalist>
+                    <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 5px;">
+                        * 추천 리스트에 없더라도 직접 입력이 가능합니다.
+                    </small>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label class="field-label" style="margin-bottom: 0;">포트폴리오 URL<span class="optional-mark">(선택)</span></label>
+                        <button type="button" onclick="addPortfolioField()" class="btn-detail" style="padding: 4px 10px; font-size: 0.7rem;">
+                            <i class="fa-solid fa-plus"></i> 추가
+                        </button>
+                    </div>
+                    
+                    <div id="portfolio-container">
+                        <div class="portfolio-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="url" name="portfolio_urls" placeholder="https://github.com/yourname" style="flex: 1;">
+                            <div style="width: 38px;"></div> 
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-custom" style="width: 100%; padding: 14px; font-size: 1rem;">
+                    가입하기
+                </button>
+            </form>
+
+            <div class="login-footer">
+                이미 계정이 있으신가요? <a href="/login">로그인</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fa-solid fa-moon"></i> 테마 변경
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. 아이디 중복 확인 로직
+    async function checkUsername() {
+        const username = document.getElementById('username').value;
+        const msgElement = document.getElementById('id-check-msg');
+        
+        if (!username) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/check-id?username=${username}`);
+            const data = await response.json();
+            
+            if (data.available) {
+                msgElement.style.color = "#4ade80"; // Success Green
+                msgElement.innerText = "사용 가능한 아이디입니다.";
+            } else {
+                msgElement.style.color = "#f87171"; // Error Red
+                msgElement.innerText = "이미 존재하는 아이디입니다.";
+            }
+        } catch (error) {
+            console.error("Error checking ID:", error);
+        }
+    }
+
+    // 2. 폼 제출 전 비밀번호 최종 검증
+    function validateForm() {
+        const pass = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+
+        if (pass !== confirm) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return false;
+        }
+        return true;
+    }
+
+    // 3. 테마 토글 로직
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-moon"></i> 테마 변경' : '<i class="fa-solid fa-sun"></i> 테마 변경';
+    });
+
+    if (localStorage.getItem('theme') === 'light') {
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i> 테마 변경';
+    }
+    // 포트폴리오 필드 추가 함수
+    function addPortfolioField() {
+        const container = document.getElementById('portfolio-container');
+        
+        // 새로운 입력창 그룹 생성
+        const newField = document.createElement('div');
+        newField.className = 'portfolio-item';
+        newField.style.display = 'flex';
+        newField.style.gap = '10px';
+        newField.style.marginBottom = '10px';
+        
+        newField.innerHTML = `
+            <input type="url" name="portfolio_urls" placeholder="추가 URL (블로그, 노션 등)" style="flex: 1;">
+            <button type="button" onclick="removePortfolioField(this)" class="btn-detail" style="color: #f87171; border-color: rgba(248, 113, 113, 0.3); width: 38px; padding: 0;">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        `;
+        
+        container.appendChild(newField);
+    }
+
+    // 포트폴리오 필드 삭제 함수
+    function removePortfolioField(button) {
+        const fieldGroup = button.parentElement;
+        fieldGroup.remove();
+    }
+    // 카테고리 전환 함수
+    function showSubCategory(cat) {
+        document.querySelectorAll('.sub-group').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.category-item').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById('sub-' + cat).style.display = 'flex';
+        event.currentTarget.classList.add('active');
+    }
+
+    // 태그 생성/제거 함수
+    function toggleRoleTag(checkbox) {
+        const container = document.getElementById('selected-roles-container');
+        const roleName = checkbox.value;
+        
+        if (checkbox.checked) {
+            const tag = document.createElement('span');
+            tag.className = 'role-tag';
+            tag.id = 'tag-' + roleName.replace(/\s/g, '');
+            tag.innerHTML = `${roleName} <i class="fa-solid fa-xmark" style="cursor:pointer" onclick="removeRole('${roleName}')"></i>`;
+            container.appendChild(tag);
+        } else {
+            removeRole(roleName);
+        }
+    }
+
+    function removeRole(name) {
+        const checkbox = document.querySelector(`input[value="${name}"]`);
+        if (checkbox) checkbox.checked = false;
+        
+        const tag = document.getElementById('tag-' + name.replace(/\s/g, ''));
+        if (tag) tag.remove();
+    }
+</script>
+</body>
+</html>

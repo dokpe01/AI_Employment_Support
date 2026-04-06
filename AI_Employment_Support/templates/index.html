@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RecruitFlow Pro</title>
+    <title>AI Employment Support</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://kit.fontawesome.com/{{ kit_id }}.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
     <script>
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -16,7 +16,7 @@
 
 <nav class="navbar">
     <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
-        <a class="navbar-brand" href="#"><i class="fa-solid fa-code-branch me-2"></i>RECRUIT_FLOW</a>
+        <a class="navbar-brand" href="/"><i class="fa-brands fa-openai"></i>AI Employment Support</a>
         <button id="themeToggle" class="theme-toggle">
             <i class="fa-solid fa-moon"></i>
         </button>
@@ -26,53 +26,165 @@
 <div class="main-container">
     <div class="main-grid">
         <div class="list-section">
-            <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <div>
-                    <h2 style="font-weight: 800;">AI 추천 채용공고</h2>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">사용자 맞춤형 기업추천</p>
+            <div style="margin-bottom: 50px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="width: 4px; height: 24px; background: var(--accent); border-radius: 2px;"></div>
+                    <div>
+                        <h2 style="font-weight: 800; margin: 0;">AI 추천 채용공고</h2>
+                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.85rem;">사용자님의 스택과 이력을 분석한 최적의 공고입니다</p>
+                    </div>
+                </div>
+
+                <div class="job-list">
+                    {% for job in jobs %}
+                    <div class="job-card shadow-sm" style="margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: var(--card-bg);">
+                        <div style="display: flex; align-items: center; padding: 16px 20px;"> <div class="icon-box" style="width: 40px; height: 40px; margin-right: 15px; flex-shrink: 0; background: rgba(56, 189, 248, 0.08); color: var(--accent); border-radius: 8px;">
+                                <i class="fa-solid fa-microchip" style="font-size: 1.1rem;"></i>
+                            </div>
+                            
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.1); padding: 1px 6px; border-radius: 4px;">
+                                        {{ job.role }}
+                                    </span>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 10px; margin-top: 2px;">
+                                    <h4 style="font-weight: 800; font-size: 1.1rem; margin: 0; color: var(--text-main);">{{ job.company }}</h4>
+                                    <span class="status-badge {{ 'status-done' if job.status == '분석완료' else 'status-ing' if job.status == '분석중' else 'status-waiting' }}" 
+                                        style="font-size: 0.65rem; padding: 2px 6px; height: fit-content;">
+                                        {{ job.status }}
+                                    </span>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">{{ job.title }}</p>
+                                    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 3px;">
+                                        <i class="fa-solid fa-bolt" style="font-size: 0.7rem;"></i> {{ job.match_rate }}% Match
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div style="flex-shrink: 0; margin-left: 20px;">
+                                <button class="btn-detail" onclick="location.href='/project/{{ job.id }}'" 
+                                        style="padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 6px; display: flex; align-items: center; gap: 6px;">
+                                    자세히 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            <div class="job-list">
-                {% for job in jobs %}
-                <div class="job-card shadow-sm" style="margin-bottom: 12px;">
-                    <div style="display: flex; align-items: flex-start; padding: 20px;">
-                        <div class="icon-box" style="margin-right: 18px; flex-shrink: 0;">
-                            <i class="fa-solid fa-terminal"></i>
+            <div style="padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px;">
+                    <div>
+                        <h2 style="font-weight: 800; margin: 0; font-size: 1.4rem;">실시간 통합 공고</h2>
+                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.85rem;">주요 채용 사이트 실시간 크롤링 정보</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 5px;">
+                        <span class="site-chip chip-jobkorea">잡코리아</span>
+                        <span class="site-chip chip-saramin">사람인</span>
+                        <span class="site-chip chip-jobplanet">잡플래닛</span>
+                        <span class="site-chip chip-wanted">원티드</span>
+                    </div>
+                </div>
+
+                <div class="crawling-grid">
+                    <div class="crawl-item">
+                        <div class="crawl-tag tag-wanted">Wanted</div>
+                        <h5 class="crawl-title">시니어 백엔드 개발자</h5>
+                        <p class="crawl-company">카카오뱅크</p>
+                        <div class="crawl-footer">
+                            <span>서울 · 5-10년</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </div>
-                        
-                        <div style="flex-grow: 1;">
-                            <div style="margin-bottom: 6px;">
-                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
-                                    {{ job.role if job.role else '직무 미지정' }}
-                                </span>
-                            </div>
-                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 2px;">{{ job.company }}</div>
-                            <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4;">{{ job.title }}</div>
+                    </div>
+                    <div class="crawl-item">
+                        <div class="crawl-tag tag-saramin">사람인</div>
+                        <h5 class="crawl-title">Python SW 엔지니어</h5>
+                        <p class="crawl-company">네이버 클라우드</p>
+                        <div class="crawl-footer">
+                            <span>경기 · 신입/경력</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </div>
-                        
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; min-height: 70px; flex-shrink: 0; margin-left: 15px;">
-                            <span class="status-badge {{ 'status-done' if job.status == '분석완료' else 'status-ing' if job.status == '분석중' else 'status-waiting' }}">
-                                {{ job.status }}
-                            </span>
-                            
-                            <button class="btn-detail" onclick="location.href='/project/{{ job.id }}'" style="margin-top: 10px;">
-                                자세히 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; margin-left: 4px;"></i>
-                            </button>
+                    </div>
+                    <div class="crawl-item">
+                        <div class="crawl-tag tag-jobkorea">잡코리아</div>
+                        <h5 class="crawl-title">데이터 분석가</h5>
+                        <p class="crawl-company">쿠팡</p>
+                        <div class="crawl-footer">
+                            <span>서울 · 신입</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
 
-        <div class="side-section">
-            <div class="login-card">
-                <h4 style="color: var(--accent); margin-bottom: 20px;"><i class="fa-solid fa-user-lock me-2"></i> Login</h4>
-                <input type="text" placeholder="Access ID">
-                <input type="password" placeholder="Passcode">
-                <button class="btn-primary-custom">로그인</button>
+        <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <aside class="login-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 24px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); text-align: center;">
+    
+                <div class="icon-box" style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(56, 189, 248, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                    <i class="fa-solid fa-user-lock" style="font-size: 1.2rem;"></i>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <h5 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">서비스 이용 안내</h5>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                        채용 분석 및 AI 지원 기능은<br>
+                        <span style="color: var(--accent); font-weight: 600;">로그인 후</span> 이용 가능합니다.
+                    </p>
+                </div>
+
+                <button onclick="location.href='/login'" class="btn-primary-custom" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 8px;">
+                    로그인하기
+                </button>
+
+                <div style="margin-top: 18px; font-size: 0.8rem; color: var(--text-muted);">
+                    아직 회원이 아니신가요? 
+                    <a href="/signup" style="color: var(--accent); text-decoration: none; font-weight: 600; margin-left: 4px;">회원가입</a>
+                </div>
+            </aside>
+
+            <div class="login-card service-card" style="cursor: pointer;" onclick="location.href='/interview'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 모의 면접</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">실시간 면접 피드백</p>
+                    </div>
+                </div>
             </div>
+
+            <div class="login-card service-card" style="cursor: pointer;" onclick="location.href='/cover-letter'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 자소서 작성</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">맞춤형 자소서 생성</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-card service-card" style="cursor: pointer;" onclick="location.href='/cover-letter'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(139, 92, 246, 0.1); color: #FFB266;">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">기업 분석</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">기업 분석 리포트</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
