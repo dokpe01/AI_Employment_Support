@@ -334,3 +334,60 @@ input:focus {
 .chip-saramin:hover { border-color: #ff5b00; color: #ff5b00; }
 .chip-wanted:hover { border-color: #258bf7; color: #258bf7; }
 .chip-jobplanet:hover { border-color: #00c362; color: #00c362; }
+
+/* 로그인 카드 내 버튼 컨테이너 간격 축소 */
+.btn-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    /* 🛠️ [수정] 텍스트와 버튼 간 간격을 '4px'로 확 줄임 */
+    margin-top: 4px !important; 
+}
+
+/* 마이페이지/로그아웃 버튼 공통 스타일 (강제 중앙 정렬) */
+.user-action-btn {
+    flex: 1;
+    /* 🛠️ [수정] 높이를 '42px'로 살짝 줄임 */
+    height: 42px !important; 
+    
+    /* 🛠️ [핵심 수정] 패딩 값을 '0'으로 초기화 */
+    padding: 0 !important; 
+    
+    font-weight: 700;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    
+    /* 🛠️ [핵심 수정] Flexbox로 가로/세로 정중앙 고정 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* 🛠️ [핵심 수정] 텍스트 줄 간격을 '1'로 고정 (세로 치우침 방지) */
+    line-height: 1 !important; 
+    
+    text-align: center;
+}
+
+/* 마이페이지 버튼 색상 (기존) */
+.user-action-btn.btn-mypage {
+    background: #007bff; /* 기존 강조색 */
+    color: white;
+}
+
+.user-action-btn.btn-mypage:hover {
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+/* 로그아웃 버튼 색상 (빨간색) */
+.user-action-btn.btn-logout {
+    background: #ff4d4f; /* 강렬한 빨간색 */
+    color: white;
+}
+
+.user-action-btn.btn-logout:hover {
+    background: #ff7875;
+}
