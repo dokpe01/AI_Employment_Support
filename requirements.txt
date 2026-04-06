@@ -1,0 +1,15 @@
+pytesseract
+pillow
+pdfplumber
+pdf2image
+opencv-python
+numpy
+google-generativeai
+sentence-transformers
+faiss-cpu
+langchain-community
+langchain-core
+selenium
+webdriver-manager
+openai
+python-dotenv
