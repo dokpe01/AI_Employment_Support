@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecruitFlow Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+        <a class="navbar-brand" href="#"><i class="fa-solid fa-code-branch me-2"></i>RECRUIT_FLOW</a>
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="main-grid">
+        <div class="list-section">
+            <div class="header-section" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <h2 style="font-weight: 800;">AI 추천 채용공고</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">사용자 맞춤형 기업추천</p>
+                </div>
+            </div>
+
+            <div class="job-list">
+                {% for job in jobs %}
+                <div class="job-card shadow-sm" style="margin-bottom: 12px;">
+                    <div style="display: flex; align-items: flex-start; padding: 20px;">
+                        <div class="icon-box" style="margin-right: 18px; flex-shrink: 0;">
+                            <i class="fa-solid fa-terminal"></i>
+                        </div>
+                        
+                        <div style="flex-grow: 1;">
+                            <div style="margin-bottom: 6px;">
+                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                    {{ job.role if job.role else '직무 미지정' }}
+                                </span>
+                            </div>
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 2px;">{{ job.company }}</div>
+                            <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4;">{{ job.title }}</div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; min-height: 70px; flex-shrink: 0; margin-left: 15px;">
+                            <span class="status-badge {{ 'status-done' if job.status == '분석완료' else 'status-ing' if job.status == '분석중' else 'status-waiting' }}">
+                                {{ job.status }}
+                            </span>
+                            
+                            <button class="btn-detail" onclick="location.href='/project/{{ job.id }}'" style="margin-top: 10px;">
+                                자세히 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; margin-left: 4px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="side-section">
+            <div class="login-card">
+                <h4 style="color: var(--accent); margin-bottom: 20px;"><i class="fa-solid fa-user-lock me-2"></i> Login</h4>
+                <input type="text" placeholder="Access ID">
+                <input type="password" placeholder="Passcode">
+                <button class="btn-primary-custom">로그인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+    });
+
+    if (localStorage.getItem('theme') === 'light') {
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+</script>
+</body>
+</html>
