@@ -5,7 +5,7 @@
     "width": 2000,
     "height": 2000,
     "scrollTop": 0,
-    "scrollLeft": 0,
+    "scrollLeft": -111.588,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -96,7 +96,9 @@
           "MWTYrXDjPLBZqAlwjNz-P",
           "ns5wAzPZj-NQu7se62GVP",
           "Ud2VA3uR-r94h8BLMEXWE",
-          "BfhktHJMU2LaEznjqyX8v"
+          "BfhktHJMU2LaEznjqyX8v",
+          "uXEngpw9kLyXiEcxXruHN",
+          "U7FsA9li3Sa5nbXQ3vBGW"
         ],
         "seqColumnIds": [
           "Dv3BtCA-birc9j9dpaTpq",
@@ -109,10 +111,12 @@
           "MWTYrXDjPLBZqAlwjNz-P",
           "ns5wAzPZj-NQu7se62GVP",
           "Ud2VA3uR-r94h8BLMEXWE",
-          "BfhktHJMU2LaEznjqyX8v"
+          "BfhktHJMU2LaEznjqyX8v",
+          "uXEngpw9kLyXiEcxXruHN",
+          "U7FsA9li3Sa5nbXQ3vBGW"
         ],
         "ui": {
-          "x": 564,
+          "x": 565,
           "y": 182,
           "zIndex": 83,
           "widthName": 60,
@@ -120,7 +124,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1775113835123,
+          "updateAt": 1775478899811,
           "createAt": 1775113583187
         }
       },
@@ -137,15 +141,15 @@
           "qo4LGhUlsUggHmTmlDguE"
         ],
         "ui": {
-          "x": 157,
-          "y": 448,
+          "x": 154,
+          "y": 484,
           "zIndex": 154,
           "widthName": 60,
           "widthComment": 60,
           "color": ""
         },
         "meta": {
-          "updateAt": 1775194314568,
+          "updateAt": 1775477236831,
           "createAt": 1775183965735
         }
       }
@@ -418,7 +422,7 @@
         "comment": "희망직무",
         "dataType": "TEXT",
         "default": "",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -427,7 +431,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1775183934756,
+          "updateAt": 1775478712885,
           "createAt": 1775183899262
         }
       },
@@ -438,7 +442,7 @@
         "comment": "거주지",
         "dataType": "TEXT",
         "default": "",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -447,7 +451,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1775183942449,
+          "updateAt": 1775478711030,
           "createAt": 1775183927979
         }
       },
@@ -609,6 +613,46 @@
         "meta": {
           "updateAt": 1775459914078,
           "createAt": 1775459900838
+        }
+      },
+      "uXEngpw9kLyXiEcxXruHN": {
+        "id": "uXEngpw9kLyXiEcxXruHN",
+        "tableId": "yOdC96GulDZpvH6Z9-k_9",
+        "name": "url",
+        "comment": "URL",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1775476102079,
+          "createAt": 1775476090319
+        }
+      },
+      "U7FsA9li3Sa5nbXQ3vBGW": {
+        "id": "U7FsA9li3Sa5nbXQ3vBGW",
+        "tableId": "yOdC96GulDZpvH6Z9-k_9",
+        "name": "site",
+        "comment": "공고사이트",
+        "dataType": "TEXT",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 62,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1775478919362,
+          "createAt": 1775478899811
         }
       }
     },

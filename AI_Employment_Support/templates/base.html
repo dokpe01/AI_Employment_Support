@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RecruitFlow Pro{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://kit.fontawesome.com/{{ kit_id }}.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --border-color: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --input-bg: #ffffff;
+        }
+
+        [data-theme='dark'] {
+            --bg-light: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #1e293b;
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            color: var(--text-main); 
+            font-family: 'Pretendard', sans-serif; 
+            margin: 0; 
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%;
+            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+    </style>
+    {% block extra_style %}{% endblock %}
+</head>
+<body>
+    <button type="button" class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+    
+    {% block content %}{% endblock %}
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const targetTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+            updateThemeIcon(targetTheme);
+        }
+        function updateThemeIcon(theme) {
+            const icon = document.querySelector('#themeBtn i');
+            if(icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        });
+    </script>
+    {% block extra_script %}{% endblock %}
+</body>
+</html>

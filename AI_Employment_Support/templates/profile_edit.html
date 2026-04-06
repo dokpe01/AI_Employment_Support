@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}정보 수정{% endblock %}
+
+{% block extra_style %}
+<style>
+    .wrapper { display: flex; justify-content: center; padding: 60px 20px; }
+    .container { width: 100%; max-width: 550px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+    
+    .header { display: flex; align-items: center; gap: 10px; color: var(--primary-blue); margin-bottom: 30px; }
+    .header h2 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .form-group { text-align: left; margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+    .form-group label span.required { color: #ff4d4f; }
+    
+    .readonly-badge { font-size: 0.7rem; color: #ff4d4f; background: rgba(255, 77, 79, 0.08); padding: 3px 8px; border-radius: 4px; margin-left: 6px; font-weight: 700; border: 1px solid rgba(255, 77, 79, 0.2); }
+
+    .form-control { 
+        width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 10px; 
+        font-size: 0.95rem; box-sizing: border-box; background-color: var(--input-bg) !important; color: var(--text-main) !important; 
+    }
+    .form-control:read-only { background-color: var(--bg-light) !important; color: var(--text-muted) !important; border: 1px dashed var(--border-color); cursor: not-allowed; }
+
+    .job-selector { border: 1px solid var(--border-color); border-radius: 10px; display: flex; height: 240px; overflow: hidden; margin-top: 8px; }
+    .job-tabs { width: 35%; border-right: 1px solid var(--border-color); background: var(--card-bg); }
+    .job-tab { padding: 14px 15px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border-bottom: 1px solid var(--border-color); color: var(--text-muted); }
+    .job-tab.active { color: var(--primary-blue); background: var(--bg-light); font-weight: 800; }
+    
+    .job-content { width: 65%; background: var(--card-bg); padding: 15px; display: none; flex-direction: column; gap: 12px; overflow-y: auto; }
+    .job-content.active { display: flex; }
+    .job-content label { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer; }
+
+    .portfolio-group { display: flex; gap: 8px; }
+    .btn-add { padding: 0 15px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--card-bg); color: var(--text-main); font-weight: 700; cursor: pointer; }
+    .btn-submit { width: 100%; height: 54px; background-color: var(--primary-blue) !important; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+    .footer-link { display: block; text-align: center; margin-top: 24px; color: var(--primary-blue); text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <i class="fa-solid fa-circle-user" style="font-size: 1.5rem;"></i>
+                <h2>회원정보 수정</h2>
+            </div>
+
+            <form action="/profile/update" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>성함 <span class="required">*</span></label>
+                        <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일 <span class="required">*</span> <span class="readonly-badge">수정 불가</span></label>
+                        <input type="email" class="form-control" value="{{ user.email }}" readonly>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>전화번호 <span class="required">*</span></label>
+                        <input type="text" name="phone" class="form-control" value="{{ user.phone if user.phone else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>거주지 <span class="required">*</span></label>
+                        <input type="text" name="location" class="form-control" value="{{ user.location if user.location else '' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>희망직무 (복수 선택 가능) <span class="required">*</span></label>
+                    <div class="job-selector">
+                        <div class="job-tabs">
+                            <div class="job-tab active" onclick="openTab(event, 'dev')">AI·개발·데이터</div>
+                            <div class="job-tab" onclick="openTab(event, 'plan')">기획·전략</div>
+                            <div class="job-tab" onclick="openTab(event, 'design')">디자인</div>
+                        </div>
+                        <div id="dev" class="job-content active">
+                            <label><input type="checkbox" name="job" value="백엔드 개발자" {% if user.job and '백엔드' in user.job %}checked{% endif %}> 백엔드 개발자</label>
+                            <label><input type="checkbox" name="job" value="프론트엔드 개발자" {% if user.job and '프론트엔드' in user.job %}checked{% endif %}> 프론트엔드 개발자</label>
+                            <label><input type="checkbox" name="job" value="데이터 엔지니어" {% if user.job and '데이터' in user.job %}checked{% endif %}> 데이터 엔지니어</label>
+                        </div>
+                        <div id="plan" class="job-content">
+                            <label><input type="checkbox" name="job" value="서비스 기획자" {% if user.job and '기획' in user.job %}checked{% endif %}> 서비스 기획자</label>
+                            <label><input type="checkbox" name="job" value="PM" {% if user.job and 'PM' in user.job %}checked{% endif %}> 프로젝트 매니저(PM)</label>
+                        </div>
+                        <div id="design" class="job-content">
+                            <label><input type="checkbox" name="job" value="UI/UX 디자이너" {% if user.job and '디자인' in user.job %}checked{% endif %}> UI/UX 디자이너</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>보유 스택</label>
+                    <input type="text" name="skill" class="form-control" value="{{ user.skill if user.skill else '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label>포트폴리오 URL</label>
+                    <div id="portfolio-container">
+                        <div class="portfolio-group">
+                            <input type="url" name="url" class="form-control" value="{{ user.url if user.url else '' }}">
+                            <button type="button" class="btn-add" onclick="addLink()">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">수정 완료</button>
+                <a href="/profile" class="footer-link">이미 수정하셨나요? 돌아가기</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    function openTab(evt, tabName) {
+        document.querySelectorAll(".job-content").forEach(c => { c.style.display = "none"; c.classList.remove("active"); });
+        document.querySelectorAll(".job-tab").forEach(t => t.classList.remove("active"));
+        document.getElementById(tabName).style.display = "flex";
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checked = document.querySelector('.job-content input:checked');
+        if (checked) {
+            const parentPane = checked.closest('.job-content');
+            const targetTab = document.querySelector(`[onclick*='${parentPane.id}']`);
+            if (targetTab) openTab({currentTarget: targetTab}, parentPane.id);
+        }
+    });
+
+    function addLink() {
+        const div = document.createElement('div');
+        div.className = 'portfolio-group';
+        div.style.marginTop = "8px";
+        div.innerHTML = `<input type="url" name="url_extra" class="form-control"><button type="button" class="btn-add" onclick="this.parentElement.remove()">-</button>`;
+        document.getElementById('portfolio-container').appendChild(div);
+    }
+</script>
+{% endblock %}
