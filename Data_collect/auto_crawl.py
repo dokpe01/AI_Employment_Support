@@ -2,10 +2,10 @@ import json
 import time
 import asyncio
 
-from data_crawling import run_parallel_scraping
-from duplicate import process_deduplication
-from data_ocr import run_detail_process  
-import LLM 
+from Data_collect.data_crawling import run_parallel_scraping
+from Data_collect.duplicate import process_deduplication
+from Data_collect.data_ocr import run_detail_process  
+import Data_collect.LLM as LLM 
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
