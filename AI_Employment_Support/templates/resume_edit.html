@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}이력서 상세 관리 | AI 면접 대비{% endblock %}
+
+{% block extra_style %}
+<style>
+    /* 전체 배경 및 레이아웃 */
+    body { background-color: #f8f9fa; color: var(--text-main); }
+    
+    .edit-wrapper { 
+        max-width: 1100px; 
+        margin: 0 auto; 
+        display: grid; 
+        grid-template-columns: 260px 1fr; 
+        gap: 30px; 
+        padding: 40px 20px; 
+    }
+    
+    /* 좌측 네비게이션 (마이페이지 카드 스타일) */
+    .edit-nav { 
+        background: white; 
+        border: 1px solid var(--border-color); 
+        border-radius: 16px; 
+        padding: 20px; 
+        height: fit-content; 
+        position: sticky; 
+        top: 100px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+    
+    .nav-item { 
+        padding: 12px 16px; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        color: var(--text-muted); 
+        font-weight: 600; 
+        margin-bottom: 8px; 
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .nav-item:hover { background: #f8f9fa; color: var(--text-main); }
+    .nav-item.active { background: #e7f1ff; color: var(--primary-blue); }
+
+    /* 우측 폼 섹션 */
+    .form-section { 
+        background: white; 
+        border: 1px solid var(--border-color); 
+        border-radius: 16px; 
+        padding: 35px; 
+        margin-bottom: 25px; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        text-align: left;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f8f9fa;
+        padding-bottom: 15px;
+    }
+
+    .section-title { font-size: 1.2rem; font-weight: 800; color: #212529; margin: 0; }
+    
+    /* 인풋 스타일 */
+    .input-group { margin-bottom: 20px; }
+    .input-group label { 
+        display: block; 
+        font-size: 0.85rem; 
+        font-weight: 700; 
+        color: var(--text-muted); 
+        margin-bottom: 8px; 
+    }
+    
+    .input-control { 
+        width: 100%; 
+        padding: 14px 16px; 
+        border: 1px solid #dee2e6; 
+        border-radius: 10px; 
+        font-size: 0.95rem; 
+        outline: none;
+        background-color: #fcfcfc;
+        transition: 0.2s;
+    }
+    
+    .input-control:focus { 
+        border-color: var(--primary-blue); 
+        background-color: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1); 
+    }
+
+    /* 프로젝트 아이템 박스 */
+    .project-card {
+        background: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    /* 하단 버튼 영역 */
+    .btn-container { 
+        display: flex; 
+        gap: 15px; 
+        margin-top: 20px; 
+        margin-bottom: 80px;
+    }
+    
+    .btn-base { 
+        flex: 1; 
+        height: 52px; 
+        border-radius: 12px; 
+        font-weight: 700; 
+        font-size: 1rem;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        cursor: pointer; 
+        transition: 0.2s;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .btn-cancel { background: #eee; color: #555; }
+    .btn-save { background: var(--primary-blue) !important; color: white !important; flex: 2; }
+    .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* 추가 버튼 스타일 */
+    .btn-add {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--primary-blue);
+        background: white;
+        color: var(--primary-blue);
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+    .btn-add:hover { background: var(--primary-blue); color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-wrapper">
+    <aside class="edit-nav">
+        <div class="nav-item active" onclick="scrollToSection('basic')">
+            <i class="fa-solid fa-user-gear"></i> 기본 정보
+        </div>
+        <div class="nav-item" onclick="scrollToSection('project')">
+            <i class="fa-solid fa-diagram-project"></i> 프로젝트 경험
+        </div>
+        <div class="nav-item" onclick="scrollToSection('intro')">
+            <i class="fa-solid fa-pen-to-square"></i> 자기소개
+        </div>
+    </aside>
+
+    <main class="edit-content">
+        <form id="resumeForm" action="/api/resume/save" method="POST">
+            
+            <section id="basic" class="form-section">
+                <div class="section-header">
+                    <h3 class="section-title">기본 정보</h3>
+                </div>
+                <div class="input-group">
+                    <label>희망 직무</label>
+                    <input type="text" name="job" class="input-control" 
+                           value="{{ user.job if user.job else '' }}" placeholder="예: 백엔드 개발자">
+                </div>
+            </section>
+
+            <section id="project" class="form-section">
+                <div class="section-header">
+                    <h3 class="section-title">프로젝트 경험</h3>
+                    <button type="button" class="btn-add" onclick="addProject()">+ 추가</button>
+                </div>
+                
+                <div id="project-list">
+                    {% if user.projects %}
+                        {% for project in user.projects %}
+                        <div class="project-card">
+                            <div class="input-group">
+                                <label>프로젝트명</label>
+                                <input type="text" name="project_title[]" class="input-control" value="{{ project.title }}">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label>Action (내가 한 일)</label>
+                                <textarea name="project_action[]" class="input-control" style="height: 120px; resize: none;">{{ project.action }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="project-card">
+                            <div class="input-group">
+                                <label>프로젝트명</label>
+                                <input type="text" name="project_title[]" class="input-control" placeholder="프로젝트 제목을 입력하세요">
+                            </div>
+                            <div class="input-group" style="margin-bottom:0;">
+                                <label>Action (내가 한 일)</label>
+                                <textarea name="project_action[]" class="input-control" style="height: 120px; resize: none;" placeholder="본인이 기여한 핵심 내용을 STAR 기법으로 적어주세요"></textarea>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <div class="btn-container">
+                <a href="/profile" class="btn-base btn-cancel">취소</a>
+                <button type="submit" class="btn-base btn-save">이력서 저장하기</button>
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+    // 프로젝트 항목 추가 함수
+    function addProject() {
+        const container = document.getElementById('project-list');
+        const newProject = document.createElement('div');
+        newProject.className = 'project-card';
+        newProject.innerHTML = `
+            <div class="input-group">
+                <label>프로젝트명</label>
+                <input type="text" name="project_title[]" class="input-control" placeholder="프로젝트 제목">
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <label>Action (내가 한 일)</label>
+                <textarea name="project_action[]" class="input-control" style="height: 120px; resize: none;" placeholder="내용을 입력하세요"></textarea>
+            </div>
+        `;
+        container.appendChild(newProject);
+    }
+
+    // 네비게이션 스크롤 이동
+    function scrollToSection(id) {
+        const element = document.getElementById(id);
+        const offset = 100;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        
+        // Active 상태 변경
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        
+        console.log("URL에서 받은 데이터:", dataParam); // 브라우저 콘솔(F12) 확인
+        
+        if (dataParam) {
+            try {
+                const decodedData = JSON.parse(decodeURIComponent(dataParam));
+                console.log("파싱된 객체:", decodedData);
+                
+                // 여기서 input창에 강제로 값을 넣어보는 테스트
+                if(decodedData.job) {
+                    document.querySelector('input[name="job"]').value = decodedData.job;
+                }
+            } catch (e) {
+                console.error("데이터 파싱 실패:", e);
+            }
+        }
+    };
+</script>
+{% endblock %}
