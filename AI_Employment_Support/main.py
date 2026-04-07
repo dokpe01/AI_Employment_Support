@@ -1,20 +1,23 @@
-from fastapi import FastAPI, Request, Form, Depends, Response
+from fastapi import FastAPI, Request, Form, Depends, Response, File, UploadFile, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
 from dotenv import load_dotenv
-from typing import List
+from typing import List, Optional
 import models, schemas, auth
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 import bcrypt
 from datetime import datetime, timedelta
-from typing import Optional
 from jose import JWTError, jwt
 import crud
 import math
+import fitz
+import pydantic
+import json
+from openai import OpenAI
 
 try:
     from database import engine, SessionLocal
@@ -25,7 +28,7 @@ models.Base.metadata.create_all(bind=engine)
 
 load_dotenv(encoding="utf-8")
 KIT_ID = os.getenv("FA_KIT_ID")
-
+client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -300,6 +303,79 @@ async def interview_page(request: Request):
     except Exception as e:
         print(f"DEBUG: FATAL_ERROR_LOG -> {type(e).__name__}: {str(e)}")
         return RedirectResponse(url="/login", status_code=302)
+
+def extract_layout_structured_data(file_content):
+    doc = fitz.open(stream=file_content, filetype="pdf")
+    structured_blocks = []
+    for page in doc:
+        page_dict = page.get_text("dict")
+        for block in page_dict["blocks"]:
+            if "lines" in block:
+                block_text = ""
+                max_font_size = 0
+                for line in block["lines"]:
+                    for span in line["spans"]:
+                        block_text += span["text"] + " "
+                        max_font_size = max(max_font_size, span["size"])
+                
+                structured_blocks.append({
+                    "text": block_text.strip(),
+                    "font_size": round(max_font_size, 1),
+                    "is_bold": "Bold" in block["lines"][0]["spans"][0]["font"]
+                })
+    return structured_blocks
+
+@app.post("/api/resume/upload")
+async def upload_resume(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        raw_layout_data = extract_layout_structured_data(content)
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "이력서 분석 전문가로서 제공된 레이아웃 데이터를 바탕으로 직무(job)와 프로젝트(projects: title, action)를 JSON으로 추출하세요."},
+                {"role": "user", "content": json.dumps(raw_layout_data, ensure_ascii=False)}
+            ],
+            response_format={ "type": "json_object" }
+        )
+        
+        parsed_result = json.loads(response.choices[0].message.content)
+        print(f"DEBUG AI RESPONSE: {parsed_result}")
+
+        return {
+            "status": "success",
+            "data": parsed_result
+        }
+
+    except Exception as e:
+        print(f"OpenAI Error: {e}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": "GPT 분석 중 오류 발생"})
+
+class ProjectBase(pydantic.BaseModel):
+    title: str
+    action: str
+
+@app.get("/resume/edit")
+async def edit_resume_page(request: Request, data: str = None):
+    user_info = {"job": "", "projects": []}
+    if data:
+        user_info = json.loads(data)
+    
+    return templates.TemplateResponse(
+        request=request,
+        name="resume_edit.html",
+        context={"user": user_info, "kit_id": KIT_ID}
+    )
+
+@app.post("/api/resume/save")
+async def save_resume(
+    job: str = Form(...),
+):
+    return {"status": "success", "message": "이력서가 저장되었습니다."}
+
+# for model in client.models.list():
+#     print(f"사용 가능한 모델명: {model.name}")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
