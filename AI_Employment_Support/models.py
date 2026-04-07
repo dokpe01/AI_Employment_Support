@@ -20,7 +20,7 @@ class Enter(Base):
     docs = Column(Text, nullable=True)
     apply = Column(Boolean, nullable=False, default=True)
     url = Column(Text, nullable=False)
-    site = Column(Text, nullable=False)
+    source = Column(Text, nullable=False)
 
 class User(Base):
     __tablename__ = "User"

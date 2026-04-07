@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 import models
 
-JSON_FILE_PATH = os.path.join("data", "LLMtest.json")
+JSON_FILE_PATH = os.path.join("data", "LLM_data.json")
 
 def json_insert_to_enter():
     if not os.path.exists(JSON_FILE_PATH):
@@ -36,7 +36,8 @@ def json_insert_to_enter():
                 "procedure": item.get("procedure"),
                 "docs": item.get("docs"),
                 "apply": bool(item.get("apply", False)),
-                "url": item.get("url")
+                "url": item.get("url"),
+                "source": item.get("source", "Unknown")
             }
             insert_mappings.append(mapping)
 
