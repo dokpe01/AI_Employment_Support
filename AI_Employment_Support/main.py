@@ -13,6 +13,8 @@ import bcrypt
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
+import crud
+import math
 
 try:
     from database import engine, SessionLocal
@@ -38,42 +40,49 @@ def get_db():
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-fake_job_db = [
-    {
-        "id": 1, 
-        "company": "기아(KIA)", 
-        "role": "Backend Engineer",
-        "title": "2026 상반기 신입 채용 (차세대 시스템 개발)", 
-        "status": "분석완료"
-    },
-    {
-        "id": 2, 
-        "company": "현대자동차", 
-        "role": "AI/ML Scientist",
-        "title": "전동화 제어 로직 최적화 및 AI 모델링", 
-        "status": "대기중"
-    },
-]
 
 @app.get("/", response_class=HTMLResponse)
-async def read_list(request: Request):
+async def read_list(
+    request: Request, 
+    db: Session = Depends(get_db), 
+    page: int = 1, 
+    source: str = "전체"
+):
     token = request.cookies.get("access_token")
     user = None
+    user_id = None
+    recommended_jobs = []
 
     if token:
         try:
             token_value = token.split(" ")[1]
             payload = jwt.decode(token_value, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
-            
+            user_id = payload.get("sub") 
             user = {"name": payload.get("user_name")}
+            
+            if user_id:
+                all_recommended = crud.get_ai_recommended_jobs(db, user_id=user_id)
+                
+                recommended_jobs = [job for job in all_recommended if job.match_rate >= 60]
         except (JWTError, IndexError, AttributeError):
             user = None
 
+    source_map = {"잡코리아": "JOBKOREA", "사람인": "SARAMIN", "잡플래닛": "JOBPLANET", "원티드": "WANTED"}
+    db_source = source_map.get(source) if source != "전체" else "전체"
+
+    size = 8
+    recent_jobs, total_count = crud.get_recent_enters(db, page=page, size=size, source=db_source)
+    total_pages = math.ceil(total_count / size)
+
     return templates.TemplateResponse(
         request=request, 
-        name="index.html", 
+        name="index.html",
         context={
-            "jobs": fake_job_db,
+            "recommended_jobs": recommended_jobs,
+            "recent_jobs": recent_jobs,
+            "current_page": page,
+            "total_pages": total_pages,
+            "current_source": source,
             "kit_id": KIT_ID,
             "user": user
         }
@@ -265,6 +274,32 @@ async def update_profile(
         db.commit()
 
     return RedirectResponse(url="/profile", status_code=303)
+
+@app.get("/interview", response_class=HTMLResponse)
+async def interview_page(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/login", status_code=302)
+
+    try:
+        token_value = str(token).replace("Bearer ", "").strip()
+        
+        payload = jwt.get_unverified_claims(token_value)
+        u_name = str(payload.get("user_name", "사용자"))
+
+        template = templates.get_template("interview.html")
+        
+        content = template.render({
+            "request": request,
+            "itv_user_name": u_name,
+            "kit_id": KIT_ID
+        })
+        
+        return HTMLResponse(content=content)
+
+    except Exception as e:
+        print(f"DEBUG: FATAL_ERROR_LOG -> {type(e).__name__}: {str(e)}")
+        return RedirectResponse(url="/login", status_code=302)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
