@@ -1,6 +1,7 @@
 pytesseract
 pillow
 pdfplumber
+pymupdf
 pdf2image
 opencv-python
 numpy
@@ -13,3 +14,4 @@ selenium
 webdriver-manager
 openai
 python-dotenv
+asyncpg
