@@ -37,19 +37,19 @@ async def run_total_automation(job):
     if not keywords:
         print(f"사용자(ID: {id})의 희망직종이 설정되지 않았습니다.")
 
-    # 각 사이트에서 링크 크롤링 
-    # raw_list = run_parallel_scraping(keywords, max_items_per_site=20)
-    # raw_path = "./data/total_site_link_final.json"
-    # with open(raw_path, "w", encoding="utf-8") as f:
-    #     json.dump(raw_list, f, ensure_ascii=False, indent=4)
-    # refined_path = "./data/refined_data.json"
+    #각 사이트에서 링크 크롤링 
+    raw_list = run_parallel_scraping(keywords, max_items_per_site=20)
+    raw_path = "./data/total_site_link_final.json"
+    with open(raw_path, "w", encoding="utf-8") as f:
+        json.dump(raw_list, f, ensure_ascii=False, indent=4)
+    refined_path = "./data/refined_data.json"
 
-    # # 중복 공고 제거
-    # process_deduplication(raw_path, refined_path)
+    # 중복 공고 제거
+    process_deduplication(raw_path, refined_path)
 
-    # #OCR
-    # ocr_output_path = "./data/ocr_data.json"
-    # run_detail_process(refined_path, ocr_output_path, workers=3)
+    #OCR
+    ocr_output_path = "./data/ocr_data.json"
+    run_detail_process(refined_path, ocr_output_path, workers=3)
     
     #LLM 가공 (비동기)
     await LLM.main()
