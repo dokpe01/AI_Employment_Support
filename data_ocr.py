@@ -22,6 +22,7 @@ def perform_ocr(image_url):
         headers = {'User-Agent': 'Mozilla/5.0'}
         res = requests.get(image_url, headers=headers, timeout=5)
         img = Image.open(BytesIO(res.content))
+        #색상 공간에서 그레이스케일로 변환, 이진화
         cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
         cv_img = cv2.threshold(cv_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         return pytesseract.image_to_string(cv_img, lang='kor+eng', config='--psm 3').strip()
