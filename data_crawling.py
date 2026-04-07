@@ -93,6 +93,11 @@ def scrape_saramin(keyword, max_pages):
                     title = link_el.get_attribute('title') or link_el.text.strip()
                     company_el = item.find_element(By.CSS_SELECTOR, "div.area_corp strong.corp_name a")
                     company = company_el.text.strip().replace("㈜", "").replace("(주)", "").strip()
+                    # 모집기간 크롤링
+                    try:
+                        date_el = item.find_element(By.CSS_SELECTOR, "div.job_date span.date")
+                        deadline = date_el.text.strip()
+                    except: deadline = "정보없음"
 
                     if link and link not in seen_urls:
                         target_links.append({
@@ -100,11 +105,13 @@ def scrape_saramin(keyword, max_pages):
                             "title": title,
                             "company": company,
                             "url": link,
+                            "deadline" : deadline,
                             "source": "saramin"
                         })
                         seen_urls.add(link)
                         added_count += 1
-                except:
+                except Exception as e:
+                    print(f"항목 추출 중 에러 발생: {e}")
                     continue
             
             if added_count == 0: break

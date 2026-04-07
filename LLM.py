@@ -3,6 +3,7 @@ import os
 import asyncio  # 비동기 처리
 from openai import AsyncOpenAI  
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ async def llm_to_schema(content, semaphore):
         [스키마]
         - name: 기업명
         - period: 모집기간 (YYYY-MM-DD, 상시채용은 '상시채용')
-        - job: 직무, 직무개요
+        - job: 모집부분,직무, 직무개요, 역할
         - location: 근무지,근무지역,회사위치(도로명주소형태)
         - work: 주요업무,담당업무, 이런 업무(리스트 형태 텍스트)
         - qual: 자격요건 (리스트 형태 텍스트)
@@ -47,7 +48,8 @@ async def llm_to_schema(content, semaphore):
 
 async def process_job(i, job, semaphore):
     content = job.get('content', '')
-    crawled_location = job.get('location', '미확인')
+    crawled_location = job.get('location', '')
+    crawled_period = job.get('period', '')
     
     if not content:
         print(f"⏩ [{i+1}] 본문이 없어 건너뜁니다.")
@@ -61,13 +63,20 @@ async def process_job(i, job, semaphore):
             print(f"⚠️ 에러 발생 ({job.get('title')}): {structured['error']}")
             return None
 
-        llm_location = structured.get('location', '').strip()
-        if not llm_location or llm_location == "미기재":
-            if crawled_location != "미확인":
+        if structured.get('location') in ["", "미기재", None]:
+            if crawled_location:
                 structured['location'] = crawled_location
+        if structured.get('period') in ["", "미기재", None]:
+            if crawled_period:
+                structured['period'] = crawled_period
+        if structured.get('name') in ["", "미기재", None]:
+            if job.get('company'):
+                structured['name'] = job.get('company')
+
 
         structured['url'] = job.get('url')
         structured['source'] = job.get('source')
+        structured['collected_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         if structured.get('name') == '미기재':
             structured['name'] = job.get('company')
@@ -100,7 +109,6 @@ async def main():
             json.dump(final_results, f, ensure_ascii=False, indent=4)
         
         print(f"\n✅ 가공 완료! 총 {len(final_results)}건이 저장되었습니다.")
-        print(f"📍 저장 위치: {output_path}")
 
     except FileNotFoundError:
         print("❌ 파일을 찾을 수 없습니다.")
