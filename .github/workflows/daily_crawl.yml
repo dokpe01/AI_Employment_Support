@@ -1,0 +1,36 @@
+name: Daily Crawling Automation
+
+on:
+  schedule:
+    # 한국 시간 오후 9시 = UTC 낮 12시
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Actions 탭에서 수동 실행 버튼 활성화
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          # 만약 특정 브랜치(예: dev)에서 실행하고 싶다면 아래 주석 해제
+          ref: 'dev'
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          # 만약 Playwright를 사용하신다면 아래 명령어도 추가하세요
+          # playwright install --with-deps
+
+      - name: Run Python Script
+        env:
+          # 깃허브 Settings > Secrets에 등록한 변수를 가져옴
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # LLM API KEY 등 필요한 환경변수 모두 등록
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
+        run: python auto_crawl.py

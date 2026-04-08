@@ -15,3 +15,10 @@ webdriver-manager
 openai
 python-dotenv
 asyncpg
+sqlalchemy
+greenlet
+playwright
+beautifulsoup4
+requests
+schedule
+apscheduler

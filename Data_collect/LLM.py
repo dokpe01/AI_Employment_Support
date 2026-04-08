@@ -26,7 +26,8 @@ async def llm_to_schema(content, semaphore):
         - prefer: 우대사항 (리스트 형태 텍스트)
         - procedure: 채용절차
         - docs: 제출서류(필요한 서류명을 가지고 오세요)
-        - apply: 접수방법 
+        - apply: 접수방법
+        - career : 경력(신입, 경력, 경력이면 연차도 가지고 오세요) 
 
         [공고 본문]
         {content}
@@ -52,7 +53,7 @@ async def process_job(i, job, semaphore):
     crawled_period = job.get('period', '')
     
     if not content:
-        print(f"⏩ [{i+1}] 본문이 없어 건너뜁니다.")
+        print(f"[{i+1}] 본문이 없어 건너뜁니다.")
         return None
 
     try:
@@ -60,7 +61,7 @@ async def process_job(i, job, semaphore):
         structured = await llm_to_schema(content, semaphore)
 
         if "error" in structured:
-            print(f"⚠️ 에러 발생 ({job.get('title')}): {structured['error']}")
+            print(f"에러 발생 ({job.get('title')}): {structured['error']}")
             return None
 
         if structured.get('location') in ["", "미기재", None]:
@@ -81,23 +82,29 @@ async def process_job(i, job, semaphore):
         if structured.get('name') == '미기재':
             structured['name'] = job.get('company')
             
-        print(f"✅ [{i+1}] 가공 완료: {job.get('title')}")
+        print(f"[{i+1}] 가공 완료: {job.get('title')}")
         return structured
 
     except Exception as e:
-        print(f"⚠️ 시스템 에러 ({job.get('title')}): {e}")
+        print(f"시스템 에러 ({job.get('title')}): {e}")
         return None
 
 async def main():
-    file_path = "./data/ocr_data.json"
-    output_path = "./data/LLM_data.json"
+    current_file_dir = os.path.dirname(os.path.abspath(__file__)) 
+    project_root = os.path.dirname(current_file_dir) 
+    file_path = os.path.join(project_root, "AI_Employment_Support", "data", "ocr_data.json")
+    output_path = os.path.join(project_root, "AI_Employment_Support", "data", "LLM_data.json")
+
+    # 폴더가 없을 경우를 대비해 생성
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     try:
+        if not os.path.exists(file_path):
+            print(f"❌ 입력 파일을 찾을 수 없습니다: {file_path}")
+            return
+        
         with open(file_path, "r", encoding="utf-8") as f:
             targets = json.load(f)
-
-        print(f"🚀 총 {len(targets)}건 비동기 가공 시작 (병렬 처리)")
-
         # 동시 요청 
         semaphore = asyncio.Semaphore(10)
 
@@ -108,10 +115,10 @@ async def main():
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(final_results, f, ensure_ascii=False, indent=4)
         
-        print(f"\n✅ 가공 완료! 총 {len(final_results)}건이 저장되었습니다.")
+        print(f"\n가공 완료! 총 {len(final_results)}건이 저장되었습니다.")
 
     except FileNotFoundError:
-        print("❌ 파일을 찾을 수 없습니다.")
+        print("파일을 찾을 수 없습니다.")
 
 if __name__ == "__main__":
     asyncio.run(main())

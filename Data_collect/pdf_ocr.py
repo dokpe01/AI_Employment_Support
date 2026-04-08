@@ -32,7 +32,7 @@ def save_to_txt(content, output_path):
             f.write(content)
 
     except Exception as e:
-        print(f"❌ 저장 실패: {e}")
+        print(f"저장 실패: {e}")
 
 
 if __name__ == "__main__":

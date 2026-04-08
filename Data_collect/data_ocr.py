@@ -22,7 +22,6 @@ def perform_ocr(image_url):
         headers = {'User-Agent': 'Mozilla/5.0'}
         res = requests.get(image_url, headers=headers, timeout=5)
         img = Image.open(BytesIO(res.content))
-        #색상 공간에서 그레이스케일로 변환, 이진화
         cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
         cv_img = cv2.threshold(cv_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         return pytesseract.image_to_string(cv_img, lang='kor+eng', config='--psm 3').strip()
@@ -90,8 +89,6 @@ def process_single_job(job):
 
                             if prd_text:
                                 job['period'] = prd_text.strip()
-
-                        # 2. 근무지역 추출
                             loc_el = content_el.find_elements(By.CSS_SELECTOR, ".recruitment-summary__location")
                             if loc_el:
                                 job['location'] = loc_el[0].text.strip()
@@ -126,7 +123,7 @@ def process_single_job(job):
 
                 full_content = "\n\n".join(parts)
             except Exception as e:
-                print(f"⚠️ 잡플래닛 정밀 추출 에러: {e}")
+                print(f"잡플래닛 정밀 추출 에러: {e}")
 
         # 3. 사람인 사이트
         elif job['source'] == 'saramin':
@@ -158,7 +155,7 @@ def process_single_job(job):
                     job['location'] = loc_el[0].text.replace("지도보기", "").strip()
 
             except Exception as e:
-                print(f"⚠️ 사람인 추출 중 에러: {e}")
+                print(f"사람인 추출 중 에러: {e}")
 
         # 4. 잡코리아 사이트 
         elif job['source'] == 'jobkorea':
@@ -200,7 +197,7 @@ def process_single_job(job):
                 full_content = "\n\n".join(outer_parts) + f"\n\n[상세본문]\n{inner_text}"
 
             except Exception as e:
-                print(f"⚠️ 잡코리아 추출 중 에러: {e}")
+                print(f"잡코리아 추출 중 에러: {e}")
 
         # 하이브리드 OCR 추가 실행
         all_imgs = driver.find_elements(By.TAG_NAME, "img")
@@ -219,7 +216,7 @@ def process_single_job(job):
         return job
 
     except Exception as e:
-        print(f"❌ 에러 발생 ({job['url']}): {e}")
+        print(f"에러 발생 ({job['url']}): {e}")
         return job
     finally:
         driver.quit()
@@ -235,7 +232,7 @@ def run_detail_process(input_path="./data/refined_data.json", output_path="./dat
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(final_results, f, ensure_ascii=False, indent=4)
 
-    print(f"✨ 2단계 OCR 수집 완료! 소요 시간: {round(time.time() - start_time, 2)}초")
+    print(f"2단계 OCR 수집 완료! 소요 시간: {round(time.time() - start_time, 2)}초")
     return final_results
 
 if __name__ == "__main__":
