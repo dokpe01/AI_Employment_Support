@@ -63,7 +63,7 @@ def scrape_jobkorea(keyword, max_pages):
                         continue
                 except:
                     continue
-
+        print(f"[잡코리아] 리스트 수집 완료.({len(target_links)}건)")
         return target_links
 
     finally:
@@ -115,7 +115,7 @@ def scrape_saramin(keyword, max_pages):
                     continue
             
             if added_count == 0: break
-            
+        print(f"[사람인] 리스트 수집 완료.({len(target_links)}건)")    
         return target_links
     finally:
         driver.quit()
@@ -234,7 +234,7 @@ def run_parallel_scraping(keywords, max_items_per_site=50):
                 if result:
                     final_list.extend(result)
             except Exception as e:
-                print(f"⚠️ 작업 중 에러 발생: {e}")
+                print(f"작업 중 에러 발생: {e}")
                
     return final_list
 
@@ -251,4 +251,3 @@ if __name__ == "__main__":
        
     print(f"\n 수집 완료! 소요 시간: {round(time.time() - start_time, 2)}초")
     print(f"파일 저장됨: {output_filename} (총 {len(total_data)}건)")
-
