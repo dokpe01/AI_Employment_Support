@@ -77,6 +77,7 @@ async def process_job(i, job, semaphore):
 
         structured['url'] = job.get('url')
         structured['source'] = job.get('source')
+        structured['career'] = structured.get('career', '미기재')
         structured['collected_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         if structured.get('name') == '미기재':

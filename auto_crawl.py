@@ -1,20 +1,31 @@
 import sys
 import os
-import json
-import time
-import asyncio
-from datetime import datetime
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 support_dir = os.path.join(current_dir, "AI_Employment_Support")
 if support_dir not in sys.path:
     sys.path.insert(0, support_dir)
+if current_dir not in sys.path:
+    sys.path.insert(1, current_dir)
+
+import json
+import time
+import asyncio
+from datetime import datetime
+
+try:
+    from AI_Employment_Support.json_load import json_insert_to_enter
+    print("json_load 임포트 성공")
+except ImportError as e:
+    print(f"json_load 임포트 실패: {e}")
+    # 만약 위 방법이 안될 경우를 대비한 2차 시도
+    from AI_Employment_Support.json_load import json_insert_to_enter
 
 from Data_collect.data_crawling import run_parallel_scraping
 from Data_collect.duplicate import process_deduplication
 from Data_collect.data_ocr import run_detail_process  
 import Data_collect.LLM as LLM 
-from json_load import json_insert_to_enter
+from AI_Employment_Support.json_load import json_insert_to_enter
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
