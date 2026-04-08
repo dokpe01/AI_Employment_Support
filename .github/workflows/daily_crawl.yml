@@ -32,5 +32,7 @@ jobs:
           # 깃허브 Settings > Secrets에 등록한 변수를 가져옴
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           # LLM API KEY 등 필요한 환경변수 모두 등록
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DB_PW: ${{ secrets.DB_PW }} 
+          DB_ID: ${{ secrets.DB_ID }}
         run: python auto_crawl.py
