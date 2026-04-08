@@ -63,7 +63,7 @@ def scrape_jobkorea(keyword, max_pages):
                         continue
                 except:
                     continue
-
+        print(f"[잡코리아] 리스트 수집 완료.({len(target_links)}건)")
         return target_links
 
     finally:
@@ -115,7 +115,7 @@ def scrape_saramin(keyword, max_pages):
                     continue
             
             if added_count == 0: break
-            
+        print(f"[사람인] 리스트 수집 완료.({len(target_links)}건)")    
         return target_links
     finally:
         driver.quit()
