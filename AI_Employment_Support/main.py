@@ -1,18 +1,23 @@
-from fastapi import FastAPI, Request, Form, Depends, Response
+from fastapi import FastAPI, Request, Form, Depends, Response, File, UploadFile, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
 from dotenv import load_dotenv
-from typing import List
+from typing import List, Optional
 import models, schemas, auth
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 import bcrypt
 from datetime import datetime, timedelta
-from typing import Optional
 from jose import JWTError, jwt
+import crud
+import math
+import fitz
+import pydantic
+import json
+from openai import OpenAI
 
 try:
     from database import engine, SessionLocal
@@ -23,7 +28,7 @@ models.Base.metadata.create_all(bind=engine)
 
 load_dotenv(encoding="utf-8")
 KIT_ID = os.getenv("FA_KIT_ID")
-
+client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -38,42 +43,49 @@ def get_db():
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-fake_job_db = [
-    {
-        "id": 1, 
-        "company": "기아(KIA)", 
-        "role": "Backend Engineer",
-        "title": "2026 상반기 신입 채용 (차세대 시스템 개발)", 
-        "status": "분석완료"
-    },
-    {
-        "id": 2, 
-        "company": "현대자동차", 
-        "role": "AI/ML Scientist",
-        "title": "전동화 제어 로직 최적화 및 AI 모델링", 
-        "status": "대기중"
-    },
-]
 
 @app.get("/", response_class=HTMLResponse)
-async def read_list(request: Request):
+async def read_list(
+    request: Request, 
+    db: Session = Depends(get_db), 
+    page: int = 1, 
+    source: str = "전체"
+):
     token = request.cookies.get("access_token")
     user = None
+    user_id = None
+    recommended_jobs = []
 
     if token:
         try:
             token_value = token.split(" ")[1]
             payload = jwt.decode(token_value, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
-            
+            user_id = payload.get("sub") 
             user = {"name": payload.get("user_name")}
+            
+            if user_id:
+                all_recommended = crud.get_ai_recommended_jobs(db, user_id=user_id)
+                
+                recommended_jobs = [job for job in all_recommended if job.match_rate >= 60]
         except (JWTError, IndexError, AttributeError):
             user = None
 
+    source_map = {"잡코리아": "JOBKOREA", "사람인": "SARAMIN", "잡플래닛": "JOBPLANET", "원티드": "WANTED"}
+    db_source = source_map.get(source) if source != "전체" else "전체"
+
+    size = 8
+    recent_jobs, total_count = crud.get_recent_enters(db, page=page, size=size, source=db_source)
+    total_pages = math.ceil(total_count / size)
+
     return templates.TemplateResponse(
         request=request, 
-        name="index.html", 
+        name="index.html",
         context={
-            "jobs": fake_job_db,
+            "recommended_jobs": recommended_jobs,
+            "recent_jobs": recent_jobs,
+            "current_page": page,
+            "total_pages": total_pages,
+            "current_source": source,
             "kit_id": KIT_ID,
             "user": user
         }
@@ -265,6 +277,105 @@ async def update_profile(
         db.commit()
 
     return RedirectResponse(url="/profile", status_code=303)
+
+@app.get("/interview", response_class=HTMLResponse)
+async def interview_page(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/login", status_code=302)
+
+    try:
+        token_value = str(token).replace("Bearer ", "").strip()
+        
+        payload = jwt.get_unverified_claims(token_value)
+        u_name = str(payload.get("user_name", "사용자"))
+
+        template = templates.get_template("interview.html")
+        
+        content = template.render({
+            "request": request,
+            "itv_user_name": u_name,
+            "kit_id": KIT_ID
+        })
+        
+        return HTMLResponse(content=content)
+
+    except Exception as e:
+        print(f"DEBUG: FATAL_ERROR_LOG -> {type(e).__name__}: {str(e)}")
+        return RedirectResponse(url="/login", status_code=302)
+
+def extract_layout_structured_data(file_content):
+    doc = fitz.open(stream=file_content, filetype="pdf")
+    structured_blocks = []
+    for page in doc:
+        page_dict = page.get_text("dict")
+        for block in page_dict["blocks"]:
+            if "lines" in block:
+                block_text = ""
+                max_font_size = 0
+                for line in block["lines"]:
+                    for span in line["spans"]:
+                        block_text += span["text"] + " "
+                        max_font_size = max(max_font_size, span["size"])
+                
+                structured_blocks.append({
+                    "text": block_text.strip(),
+                    "font_size": round(max_font_size, 1),
+                    "is_bold": "Bold" in block["lines"][0]["spans"][0]["font"]
+                })
+    return structured_blocks
+
+@app.post("/api/resume/upload")
+async def upload_resume(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        raw_layout_data = extract_layout_structured_data(content)
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "이력서 분석 전문가로서 제공된 레이아웃 데이터를 바탕으로 직무(job)와 프로젝트(projects: title, action)를 JSON으로 추출하세요."},
+                {"role": "user", "content": json.dumps(raw_layout_data, ensure_ascii=False)}
+            ],
+            response_format={ "type": "json_object" }
+        )
+        
+        parsed_result = json.loads(response.choices[0].message.content)
+        print(f"DEBUG AI RESPONSE: {parsed_result}")
+
+        return {
+            "status": "success",
+            "data": parsed_result
+        }
+
+    except Exception as e:
+        print(f"OpenAI Error: {e}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": "GPT 분석 중 오류 발생"})
+
+class ProjectBase(pydantic.BaseModel):
+    title: str
+    action: str
+
+@app.get("/resume/edit")
+async def edit_resume_page(request: Request, data: str = None):
+    user_info = {"job": "", "projects": []}
+    if data:
+        user_info = json.loads(data)
+    
+    return templates.TemplateResponse(
+        request=request,
+        name="resume_edit.html",
+        context={"user": user_info, "kit_id": KIT_ID}
+    )
+
+@app.post("/api/resume/save")
+async def save_resume(
+    job: str = Form(...),
+):
+    return {"status": "success", "message": "이력서가 저장되었습니다."}
+
+# for model in client.models.list():
+#     print(f"사용 가능한 모델명: {model.name}")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

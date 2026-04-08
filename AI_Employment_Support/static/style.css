@@ -391,3 +391,20 @@ input:focus {
 .user-action-btn.btn-logout:hover {
     background: #ff7875;
 }
+
+/* 기본 D-Day 스타일 */
+.d-day-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+    background: #f5f5f5;
+    color: #8c8c8c;
+}
+
+/* 마감 임박 강조 스타일 */
+.d-day-urgent {
+    background: #fff1f0;
+    color: #ff4d4f;
+}
