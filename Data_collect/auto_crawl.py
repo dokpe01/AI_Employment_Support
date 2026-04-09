@@ -4,18 +4,16 @@ import json
 import time
 import asyncio
 from datetime import datetime
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
 from dotenv import load_dotenv
 from sqlalchemy import text
-
 from data_crawling import run_parallel_scraping
 from duplicate import process_deduplication
 from data_ocr import run_detail_process
 import LLM as LLM
 from async_database import AsyncSessionLocal
 from async_models import Enter
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 if sys.platform.startswith("win"):
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -42,30 +40,62 @@ def load_json_file(file_path):
         return json.load(f)
     
 def to_text(value):
+    if value is None:
+        return None
     if isinstance(value, list):
-        return ", ".join(value)
-    return value
+        return "\n".join(str(v) for v in value)
+    return str(value)
+
+async def get_existing_urls():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(text('SELECT url FROM "Enter"'))
+        return {row[0] for row in result.fetchall() if row[0]}
+    
+async def prepare_final_data(data_list):
+    existing_urls = await get_existing_urls()
+    seen = set()
+    prepared = []
+
+    for item in data_list:
+        url = to_text(item.get("url"))
+        if not url:
+            continue
+        if url in existing_urls:
+            continue
+        if url in seen:
+            continue
+
+        seen.add(url)
+
+        prepared.append({
+            "name": to_text(item.get("name")) or "정보없음",
+            "period": to_text(item.get("period")) or "미정",
+            "job": to_text(item.get("job")) or "",
+            "location": to_text(item.get("location")) or "",
+            "work": to_text(item.get("work")),
+            "qual": to_text(item.get("qual")),
+            "prefer": to_text(item.get("prefer")),
+            "procedure": to_text(item.get("procedure")),
+            "docs": to_text(item.get("docs")),
+            "apply": to_text(item.get("apply")) or "미기재",
+            "url": url,
+            "source": to_text(item.get("source")) or "unknown",
+            "career": to_text(item.get("career")),
+            "collected_at": to_text(item.get("collected_at")),
+        })
+
+    return prepared
+
     
 async def insert_enter_data(data_list):
+    if not data_list:
+        print("DB에 저장할 데이터가 없습니다.")
+        return
+
     async with AsyncSessionLocal() as session:
         try:
             for item in data_list:
-                new_data = Enter(
-                name=item.get("name", "정보없음"),
-                period=item.get("period", "미정"),
-                job=to_text(item.get("job")),
-                location=to_text(item.get("location")),
-                work=to_text(item.get("work")),
-                qual=to_text(item.get("qual")),
-                prefer=to_text(item.get("prefer")),
-                procedure=to_text(item.get("procedure")),
-                docs=to_text(item.get("docs")),
-                apply=item.get("apply", "미기재"),
-                url=item.get("url"),
-                source=item.get("source", "unknown"),
-                career=to_text(item.get("career")),
-                collected_at=item.get("collected_at")
-            )
+                new_data = Enter(**item)
                 session.add(new_data)
 
             await session.commit()
@@ -85,20 +115,24 @@ async def run_total_automation(user_id):
 
     #각 사이트에서 링크 크롤링 
     raw_list = run_parallel_scraping(keywords, max_items_per_site=20)
+    if not raw_list:
+        print("크롤링 결과가 없습니다.")
+        return
+    existing_urls = await get_existing_urls()
+    print("기존 DB URL 개수:", len(existing_urls))
+    print("크롤링 원본 개수:", len(raw_list))
 
-    #DB에 있는 기존 데이터들은 제거 
-    async with AsyncSessionLocal() as session:
-        # DB의 모든 URL을 가져옴 (또는 최근 2주치만 가져와도 충분)
-        result = await session.execute(text('SELECT url FROM "Enter"'))
-        existing_urls = {row[0] for row in result.fetchall()}
-    
-    # DB에 없는 새로운 공고만 남김
-    new_raw_list = [item for item in raw_list if item.get('url') not in existing_urls]
-    
+    new_raw_list = [
+        item for item in raw_list
+        if item.get("url") and item.get("url") not in existing_urls
+    ]
+
+    print("1차 중복 제거 후 개수:", len(new_raw_list))
+
     if not new_raw_list:
         print("새로운 공고가 없습니다. 작업을 종료합니다.")
         return
-    
+
     data_dir = os.path.join(current_dir, "data")
     os.makedirs(data_dir, exist_ok=True)
 
@@ -110,12 +144,9 @@ async def run_total_automation(user_id):
     with open(raw_path, "w", encoding="utf-8") as f:
         json.dump(new_raw_list, f, ensure_ascii=False, indent=4)
 
-    # 중복 공고 제거
     process_deduplication(raw_path, refined_path)
-
-    #OCR
     run_detail_process(refined_path, ocr_output_path, workers=3)
-    
+
     #LLM 가공 (비동기)
     await LLM.main()
 
@@ -124,7 +155,9 @@ async def run_total_automation(user_id):
     final_data = load_json_file(final_output_path)
     print("최종 데이터 개수:", len(final_data))
     print("샘플데이터:", final_data[:2])
-    await insert_enter_data(final_data)
+    prepared_data = await prepare_final_data(final_data)
+    print("최종 저장 대상 개수:", len(prepared_data))
+    await insert_enter_data(prepared_data)
 
     end_total = time.time()
     print(f"\n 모든 자동화 공정 완료! (총 소요 시간: {round(end_total - start_total, 2)}초)")
