@@ -20,9 +20,11 @@ class Enter(Base):
     prefer = Column(Text, nullable=True)
     procedure = Column(Text, nullable=True)
     docs = Column(Text, nullable=True)
-    apply = Column(Boolean, nullable=False, default=True)
+    apply = Column(Text, nullable=False)
     url = Column(Text, nullable=False)
     source = Column(Text, nullable=False)
+    career = Column(Text, nullable=True)
+    collected_at = Column(Text, nullable=True)
 
 class User(Base):
     __tablename__ = "User"
