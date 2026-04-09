@@ -10,7 +10,7 @@ if root_dir not in sys.path:
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from json_load import json_insert_to_enter 
+#from json_load import json_insert_to_enter 
 from Data_collect.data_crawling import run_parallel_scraping
 from Data_collect.duplicate import process_deduplication
 from Data_collect.data_ocr import run_detail_process  
@@ -87,7 +87,7 @@ async def run_total_automation(job):
     await LLM.main()
 
     #DB저장
-    json_insert_to_enter()
+    #json_insert_to_enter()
 
     end_total = time.time()
     print(f"\n 모든 자동화 공정 완료! (총 소요 시간: {round(end_total - start_total, 2)}초)")
