@@ -24,18 +24,18 @@ jobs:
           pwd
           ls -R
           echo "----- auto_crawl.py -----"
-          sed -n '1,40p' AI_Employment_Support/auto_crawl.py
+          sed -n '1,40p' Data_collect/auto_crawl.py
           echo "----- search json_load import -----"
           grep -R "json_load" -n AI_Employment_Support || true
       
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r AI_Employment_Support/requirements.txt
+          pip install -r Data_collect/action_requirements.txt
 
       - name: Run Python Script
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python AI_Employment_Support/auto_crawl.py
+        run: python Data_collect/auto_crawl.py
       

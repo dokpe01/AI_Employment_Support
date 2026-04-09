@@ -1,47 +1,24 @@
 import sys
 import os
-import json 
+import json
 import time
 import asyncio
 from datetime import datetime
 
-current_dir = os.path.dirname(os.path.abspath(__file__)) 
-root_dir = os.path.dirname(current_dir) 
-
-if root_dir not in sys.path:
-    sys.path.insert(0, root_dir)
-
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
-
-#from json_load import json_insert_to_enter 
-from Data_collect.data_crawling import run_parallel_scraping
-from Data_collect.duplicate import process_deduplication
-from Data_collect.data_ocr import run_detail_process  
-import Data_collect.LLM as LLM 
-from models import Enter
-
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from urllib.parse import quote_plus
+from sqlalchemy import text
 
+from data_crawling import run_parallel_scraping
+from duplicate import process_deduplication
+from data_ocr import run_detail_process
+import LLM as LLM
+from async_database import AsyncSessionLocal
+from async_models import Enter
 
 if sys.platform.startswith("win"):
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 load_dotenv()
-db_url = os.getenv("DATABASE_URL")
-
-# async 드라이버용으로 앞부분만 교체
-db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
-
-print("DB_URL preview:", db_url.split("@")[-1] if db_url else None)
-
-engine = create_async_engine(db_url)
-
-
-AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 async def get_user_keywords(user_id):
     """DB에서 특정 사용자의 희망 직종을 가져옴"""
@@ -76,11 +53,11 @@ async def insert_enter_data(data_list):
                     prefer=item.get("prefer"),
                     procedure=item.get("procedure"),
                     docs=item.get("docs"),
-                    apply=item.get("apply", True),
+                    apply=item.get("apply","미기재"),
                     url=item.get("url"),
                     source=item.get("source", "unknown"),
-                    # career=item.get("career"),
-                    # collected_at=item.get("collected_at")
+                    career=item.get("career"),
+                    collected_at=item.get("collected_at")
                 )
                 session.add(new_data)
 
@@ -109,13 +86,13 @@ async def run_total_automation(user_id):
         existing_urls = {row[0] for row in result.fetchall()}
     
     # DB에 없는 새로운 공고만 남김
-    new_raw_list = [job for job in raw_list if job.get('url') not in existing_urls]
+    new_raw_list = [item for item in raw_list if item.get('url') not in existing_urls]
     
     if not new_raw_list:
         print("새로운 공고가 없습니다. 작업을 종료합니다.")
         return
     
-    data_dir = os.path.join(current_dir, "AI_Employment_Support", "data")
+    data_dir = os.path.join(current_dir, "data")
     os.makedirs(data_dir, exist_ok=True)
 
     raw_path = os.path.join(data_dir, "total_site_link_final.json")
