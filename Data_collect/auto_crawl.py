@@ -115,7 +115,10 @@ async def run_total_automation(user_id):
     await LLM.main()
 
     #DB저장
+    print("LLM 파일 존재 여부:", os.path.exists(final_output_path))
     final_data = load_json_file(final_output_path)
+    print("최종 데이터 개수:", len(final_data))
+    print("샘플데이터:", final_data[:2])
     await insert_enter_data(final_data)
 
     end_total = time.time()
