@@ -41,26 +41,31 @@ def load_json_file(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
     
+def to_text(value):
+    if isinstance(value, list):
+        return ", ".join(value)
+    return value
+    
 async def insert_enter_data(data_list):
     async with AsyncSessionLocal() as session:
         try:
             for item in data_list:
                 new_data = Enter(
-                    name=item.get("name", "정보없음"),
-                    period=item.get("period", "미정"),
-                    job=item.get("job", ""),
-                    location=item.get("location", ""),
-                    work=item.get("work"),
-                    qual=item.get("qual"),
-                    prefer=item.get("prefer"),
-                    procedure=item.get("procedure"),
-                    docs=item.get("docs"),
-                    apply=item.get("apply","미기재"),
-                    url=item.get("url"),
-                    source=item.get("source", "unknown"),
-                    career=item.get("career"),
-                    collected_at=item.get("collected_at")
-                )
+                name=item.get("name", "정보없음"),
+                period=item.get("period", "미정"),
+                job=to_text(item.get("job")),
+                location=to_text(item.get("location")),
+                work=to_text(item.get("work")),
+                qual=to_text(item.get("qual")),
+                prefer=to_text(item.get("prefer")),
+                procedure=to_text(item.get("procedure")),
+                docs=to_text(item.get("docs")),
+                apply=item.get("apply", "미기재"),
+                url=item.get("url"),
+                source=item.get("source", "unknown"),
+                career=to_text(item.get("career")),
+                collected_at=item.get("collected_at")
+            )
                 session.add(new_data)
 
             await session.commit()
