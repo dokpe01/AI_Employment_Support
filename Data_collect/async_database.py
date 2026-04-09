@@ -10,8 +10,12 @@ if not DATABASE_URL:
 
 DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, 
+                             echo=False, 
+                             pool_pre_ping=True,
+                             connect_args={"ssl": "require"},
 
+)
 AsyncSessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,

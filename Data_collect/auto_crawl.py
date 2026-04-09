@@ -5,6 +5,8 @@ import time
 import asyncio
 from datetime import datetime
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
 from dotenv import load_dotenv
 from sqlalchemy import text
 
