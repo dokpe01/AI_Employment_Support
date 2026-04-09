@@ -92,9 +92,11 @@ async def process_job(i, job, semaphore):
 
 async def main():
     current_file_dir = os.path.dirname(os.path.abspath(__file__)) 
-    project_root = os.path.dirname(current_file_dir) 
-    file_path = os.path.join(project_root, "AI_Employment_Support", "data", "ocr_data.json")
-    output_path = os.path.join(project_root, "AI_Employment_Support", "data", "LLM_data.json")
+    file_path = os.path.join(current_file_dir, "data", "ocr_data.json")
+    output_path = os.path.join(current_file_dir, "data", "LLM_data.json")
+    print("LLM 입력 파일:", file_path)
+    print("LLM 출력 파일:", output_path)
+
 
     # 폴더가 없을 경우를 대비해 생성
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

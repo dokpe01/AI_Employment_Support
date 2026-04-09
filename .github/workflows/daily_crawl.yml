@@ -12,27 +12,30 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          # 만약 특정 브랜치(예: dev)에서 실행하고 싶다면 아래 주석 해제
-          ref: 'dev'
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-
+          python-version: '3.11'
+      
+      - name: Debug files
+        run: |
+          pwd
+          ls -R
+          echo "----- auto_crawl.py -----"
+          sed -n '1,40p' Data_collect/auto_crawl.py
+          echo "----- search json_load import -----"
+          grep -R "json_load" -n AI_Employment_Support || true
+      
       - name: Install dependencies
         run: |
-          # 만약 Playwright를 사용하신다면 아래 명령어도 추가하세요
-          # playwright install --with-deps
+          python -m pip install --upgrade pip
+          pip install -r Data_collect/action_requirements.txt
 
       - name: Run Python Script
         env:
-          # 깃허브 Settings > Secrets에 등록한 변수를 가져옴
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          # LLM API KEY 등 필요한 환경변수 모두 등록
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          DB_PW: ${{ secrets.DB_PW }} 
-          DB_ID: ${{ secrets.DB_ID }}
-        run: python auto_crawl.py
+        run: python Data_collect/auto_crawl.py
+      
