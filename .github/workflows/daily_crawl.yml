@@ -35,7 +35,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           DB_PW: ${{ secrets.DB_PW }} 
           DB_ID: ${{ secrets.DB_ID }}
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/AI_Employment_Support
 
         run: |
-          cd AI_Employment_Support
           python auto_crawl.py
