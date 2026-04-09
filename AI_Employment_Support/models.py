@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean
+from sqlalchemy.orm import declarative_base
 
 try:
     from database import Base
 except ImportError:
     from .database import Base
+Base = declarative_base()
 
 class Enter(Base):
     __tablename__ = "Enter"
