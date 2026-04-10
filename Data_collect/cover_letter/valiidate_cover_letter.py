@@ -9,10 +9,9 @@ load_dotenv()
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
-# ---------------------------
-# 1. 기본 유틸
-# ---------------------------
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(CURRENT_DIR)
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -24,41 +23,23 @@ def save_json(data, path):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-
-# ---------------------------
-# 2. 룰 기반 필터
-# ---------------------------
-
 def rule_based_clean(text: str, name: str = "") -> str:
     if not text:
         return ""
 
-    # 링크 제거
     text = re.sub(r'https?://\S+', '', text)
-
-    # 이메일 제거
     text = re.sub(r'[\w\.-]+@[\w\.-]+\.\w+', '', text)
-
-    # 전화번호 제거
     text = re.sub(r'01[0-9]-?\d{3,4}-?\d{4}', '', text)
 
-    # 인사말 제거
     text = re.sub(r'^\s*안녕하세요[^\n]*\n?', '', text)
     text = re.sub(r'^\s*안녕하십니까[^\n]*\n?', '', text)
 
-    # 끝 인사 제거
     text = re.sub(r'(감사합니다\.?|잘 부탁드립니다\.?)$', '', text)
 
-    # 이름 제거
     if name:
         text = re.sub(rf'\n?\s*{re.escape(name)}\s*$', '', text)
 
     return text.strip()
-
-
-# ---------------------------
-# 3. LLM 검증
-# ---------------------------
 
 async def llm_validate_cover_letter(draft_text: str, context: dict) -> dict:
     prompt = f"""
@@ -101,23 +82,35 @@ async def llm_validate_cover_letter(draft_text: str, context: dict) -> dict:
 
     return json.loads(response.choices[0].message.content)
 
-
-# ---------------------------
-# 4. 최종 마무리
-# ---------------------------
-
 def ensure_strong_ending(text: str) -> str:
-    if not text.endswith(("기여하겠습니다.", "성장하겠습니다.")):
+    if not text:
+        return ""
+
+    good_endings = (
+        "기여하겠습니다.",
+        "성장하겠습니다.",
+        "만들어가겠습니다.",
+        "만들어내겠습니다.",
+        "실현하겠습니다.",
+        "돕겠습니다.",
+        "보탬이 되겠습니다.",
+    )
+
+    if not text.endswith(good_endings):
         text += "\n\n데이터 기반 문제 해결 역량을 바탕으로 서비스 개선에 실질적으로 기여하겠습니다."
+
     return text
 
+async def validate_cover_letters(draft_data: dict) -> dict:
+    """
+    서버에서 직접 호출하는 함수
 
-# ---------------------------
-# 5. 메인 실행
-# ---------------------------
+    입력:
+      draft_data (generate_cover_letters 결과)
 
-async def main():
-    draft_data = load_json("./data/cover_letter_draft.json")
+    출력:
+      최종 자소서 JSON
+    """
 
     context = draft_data["context"]
     name = context["user_profile"].get("name", "")
@@ -128,17 +121,10 @@ async def main():
         version = item.get("version", "")
         strategy = item.get("strategy", "")
         draft = item.get("draft", {})
-
         raw_text = draft.get("full_cover_letter", "")
-
-        # 1. 룰 기반 정리
         cleaned = rule_based_clean(raw_text, name)
-
-        # 2. LLM 검증
         validated = await llm_validate_cover_letter(cleaned, context)
         corrected_text = validated.get("corrected_text", cleaned)
-
-        # 3. 마지막 보정
         final_text = ensure_strong_ending(corrected_text)
 
         validated_cover_letters.append({
@@ -150,22 +136,31 @@ async def main():
             "final": final_text
         })
 
-    result = {
+    return {
         "selected_job": draft_data.get("selected_job", {}),
         "job_source": draft_data.get("job_source", {}),
         "context": context,
         "validated_cover_letters": validated_cover_letters
     }
-    cover_letters = draft_data.get("cover_letters", [])
-    if not cover_letters:
-        print("검증할 자소서 버전이 없습니다.")
+
+async def main():
+    draft_path = os.path.join(DATA_DIR, "cover_letter_draft.json")
+    output_path = os.path.join(DATA_DIR, "cover_letter_final.json")
+
+    try:
+        draft_data = load_json(draft_path)
+    except Exception as e:
+        print(f"파일 로드 실패: {e}")
         return
 
-    save_json(result, "./data/cover_letter_final.json")
+    result = await validate_cover_letters(draft_data)
 
-    print("\n최종 자소서들:\n")
-    for item in validated_cover_letters:
-        print("=" * 100)
+    save_json(result, output_path)
+
+    print(f"\n최종 자소서 저장 완료: {output_path}")
+
+    for item in result["validated_cover_letters"]:
+        print("\n" + "=" * 100)
         print(f"[{item['version']}] strategy={item['strategy']}")
         print(item["final"])
         print("=" * 100)

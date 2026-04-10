@@ -10,6 +10,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_NAME = "intfloat/multilingual-e5-base"
 KEYWORD_PATH = os.path.join(CURRENT_DIR, "keywords.json")
 
+
 def ensure_list(value):
     if value is None:
         return []
@@ -33,6 +34,17 @@ def ensure_text(value, default="미기재"):
     return value if value else default
 
 
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_json(data, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
 def load_keywords():
     with open(KEYWORD_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -40,12 +52,9 @@ def load_keywords():
 
 def get_keywords_by_roles(desired_roles, keyword_dict):
     keywords = []
-
     for role in desired_roles:
         if role in keyword_dict:
             keywords.extend(keyword_dict[role])
-
-    # 중복 제거
     return list(dict.fromkeys(keywords))
 
 
@@ -111,7 +120,6 @@ def make_user_profile_text(resume_json: dict) -> str:
         f"수상: {awards}",
         f"언어: {languages}",
     ]
-
     return "\n".join(parts)
 
 
@@ -130,12 +138,10 @@ def rerank_score(user_profile: dict, job_item: dict, vector_score: float, keywor
         ensure_text(job_item.get("document_text"), "")
     ).lower()
 
-    # 기술 스택 겹침 보정
     user_skills = [s.lower() for s in ensure_list(user_profile.get("skills"))]
     overlap = sum(1 for s in user_skills if s in job_text)
     bonus += min(overlap * 0.02, 0.12)
 
-    # 선택 직무 기반 키워드 보정
     keyword_overlap = sum(
         1 for k in keywords
         if k.lower() in user_text and k.lower() in job_text
@@ -145,35 +151,15 @@ def rerank_score(user_profile: dict, job_item: dict, vector_score: float, keywor
     return vector_score + bonus
 
 
-def match_jobs_for_resume(
-    resume_json_path=None,
-    index_path=None,
-    meta_path=None,
-    output_path=None,
-    top_k=5
-):
-    resume_json_path = resume_json_path or os.path.join(DATA_DIR, "resume.json")
-    index_path = index_path or os.path.join(DATA_DIR, "jobs_faiss.index")
-    meta_path = meta_path or os.path.join(DATA_DIR, "jobs_metadata.json")
-    output_path = output_path or os.path.join(DATA_DIR, "match_result.json")
-
-    with open(resume_json_path, "r", encoding="utf-8") as f:
-        resume_json = json.load(f)
-
-    with open(meta_path, "r", encoding="utf-8") as f:
-        meta = json.load(f)
-
+def match_jobs(resume_json: dict, meta: dict, index, top_k: int = 5) -> dict:
     keyword_dict = load_keywords()
     desired_roles = ensure_list(resume_json.get("desired_role"))
     selected_keywords = get_keywords_by_roles(desired_roles, keyword_dict)
 
-    # 희망 직무가 비어 있으면 전체 키워드 fallback
     if not selected_keywords:
         selected_keywords = get_all_keywords(keyword_dict)
 
     model = SentenceTransformer(MODEL_NAME)
-    index = faiss.read_index(index_path)
-
     user_text = make_user_profile_text(resume_json)
 
     query_vec = model.encode(
@@ -190,12 +176,7 @@ def match_jobs_for_resume(
             continue
 
         item = meta[str(idx)]
-        final_score = rerank_score(
-            resume_json,
-            item,
-            float(score),
-            selected_keywords
-        )
+        final_score = rerank_score(resume_json, item, float(score), selected_keywords)
 
         results.append({
             "faiss_id": int(idx),
@@ -211,18 +192,35 @@ def match_jobs_for_resume(
 
     results = sorted(results, key=lambda x: x["final_score"], reverse=True)
 
-    result = {
+    return {
         "user_profile_text": user_text,
         "desired_role": desired_roles,
         "selected_keywords": selected_keywords,
         "matches": results
     }
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
 
+def match_jobs_from_files(
+    resume_json_path=None,
+    index_path=None,
+    meta_path=None,
+    output_path=None,
+    top_k=5
+):
+    resume_json_path = resume_json_path or os.path.join(DATA_DIR, "resume.json")
+    index_path = index_path or os.path.join(DATA_DIR, "jobs_faiss.index")
+    meta_path = meta_path or os.path.join(DATA_DIR, "jobs_metadata.json")
+    output_path = output_path or os.path.join(DATA_DIR, "match_result.json")
+
+    resume_json = load_json(resume_json_path)
+    meta = load_json(meta_path)
+    index = faiss.read_index(index_path)
+
+    result = match_jobs(resume_json, meta, index, top_k=top_k)
+    save_json(result, output_path)
     return result
 
+
 if __name__ == "__main__":
-    result = match_jobs_for_resume(top_k=5)
-    print("\nmatch_result.json 저장 완료")
+    result = match_jobs_from_files(top_k=5)
+    print(json.dumps(result, ensure_ascii=False, indent=2))

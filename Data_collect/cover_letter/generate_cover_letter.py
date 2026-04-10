@@ -9,6 +9,13 @@ load_dotenv()
 
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
+
+# ---------------------------
+# 공통 유틸
+# ---------------------------
 
 def ensure_list(value):
     if value is None:
@@ -36,19 +43,6 @@ def load_json(path: str):
         return json.load(f)
 
 
-def load_jobs_meta():
-    candidate_paths = [
-        "./data/jobs_metadata.json",
-        "./data/jobs_meta.json",
-    ]
-
-    for path in candidate_paths:
-        if os.path.exists(path):
-            return load_json(path), path
-
-    raise FileNotFoundError("jobs_metadata.json 또는 jobs_meta.json 파일을 찾을 수 없습니다.")
-
-
 def save_json(data, path: str):
     output_dir = os.path.dirname(path)
     if output_dir:
@@ -58,7 +52,30 @@ def save_json(data, path: str):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def load_jobs_meta():
+    """
+    jobs_metadata.json / jobs_meta.json 둘 다 대응
+    """
+    candidate_paths = [
+        os.path.join(DATA_DIR, "jobs_metadata.json"),
+        os.path.join(DATA_DIR, "jobs_meta.json"),
+    ]
+
+    for path in candidate_paths:
+        if os.path.exists(path):
+            return load_json(path), path
+
+    raise FileNotFoundError("jobs_metadata.json 또는 jobs_meta.json 파일을 찾을 수 없습니다.")
+
+
+# ---------------------------
+# 컨텍스트 구성
+# ---------------------------
+
 def build_user_fact_profile(resume_json: dict) -> dict:
+    """
+    자소서 생성에 사용할 사용자 사실 정보만 추림
+    """
     return {
         "name": resume_json.get("name", ""),
         "email": resume_json.get("email", ""),
@@ -76,6 +93,11 @@ def build_user_fact_profile(resume_json: dict) -> dict:
 
 
 def normalize_job_meta(job_meta: dict) -> dict:
+    """
+    jobs_metadata.json 키 구조 차이를 흡수
+    - company_name 없으면 name 사용
+    - job_posting 없으면 metadata 사용
+    """
     company_name = job_meta.get("company_name", "") or job_meta.get("name", "")
     job_posting = job_meta.get("job_posting", {})
     if not job_posting:
@@ -123,6 +145,10 @@ def build_cover_letter_context(resume_json: dict, selected_job: dict, jobs_meta:
     }
 
 
+# ---------------------------
+# 프롬프트
+# ---------------------------
+
 def get_strategy_guide(strategy: str) -> str:
     strategy_map = {
         "balanced": """
@@ -159,8 +185,8 @@ def make_cover_letter_prompt(context: dict, strategy: str = "balanced") -> str:
 5. job_posting의 주요업무, 자격요건, 우대사항을 기준으로 직무 적합성을 설명하라.
 6. 자소서 문장을 새로 작성해야 하며, 기존 자기소개서 문장을 복원하거나 재사용하지 마라.
 7. user_profile에는 사실 정보만 들어 있으며, 이것만 사용하라.
-8. excluded_self_intro_text와 같은 기존 자기소개서성 문장은 사용하지 않는다고 가정하고 작성하라.
-9. 과장된 표현보다 근거 중심으로 작성하라.
+8. 과장된 표현보다 근거 중심으로 작성하라.
+9. user_profile의 desired_role을 사용자의 희망 직무 정보로 간주하고, 채용공고의 직무와 어떻게 연결되는지 반영하라.
 10. 출력은 반드시 JSON 형식으로 작성하라.
 
 [문체 및 형식 규칙]
@@ -175,7 +201,6 @@ def make_cover_letter_prompt(context: dict, strategy: str = "balanced") -> str:
 9. 각 문단은 3~5문장 이내로 작성하라.
 10. 지원자의 강점이 공고 요구사항과 어떻게 연결되는지 드러나게 작성하라.
 11. 사용자 링크 정보가 있더라도 본문에는 링크를 삽입하지 마라.
-12. user_profile의 desired_role을 사용자의 희망 직무 정보로 간주하고, 채용공고의 직무와 어떻게 연결되는지 반영하라.
 
 [작성 전략]
 {strategy_guide}
@@ -212,6 +237,10 @@ def make_cover_letter_prompt(context: dict, strategy: str = "balanced") -> str:
 {json.dumps(context["company_analysis"], ensure_ascii=False, indent=2)}
 """.strip()
 
+
+# ---------------------------
+# 후처리
+# ---------------------------
 
 def postprocess_cover_letter(text: str, applicant_name: str = "") -> str:
     if not text:
@@ -290,6 +319,10 @@ def build_full_cover_letter_from_sections(result: dict, applicant_name: str = ""
     return full_text
 
 
+# ---------------------------
+# LLM 생성
+# ---------------------------
+
 async def generate_cover_letter_draft(context: dict, strategy: str = "balanced") -> dict:
     prompt = make_cover_letter_prompt(context, strategy)
 
@@ -334,34 +367,22 @@ async def generate_cover_letter_draft(context: dict, strategy: str = "balanced")
     return result
 
 
-def print_cover_letter_preview(draft: dict, version: str = "", strategy: str = ""):
-    print("\n" + "=" * 100)
-    if version or strategy:
-        print(f"[{version}] strategy={strategy}")
-    print(f"회사명: {draft.get('company_name', '')}")
-    print(f"직무: {draft.get('job', '')}")
-    print("=" * 100)
-    print("\n[자소서 본문]\n")
-    print(draft.get("full_cover_letter", ""))
-    print("\n" + "=" * 100)
+# ---------------------------
+# 서버용 함수
+# ---------------------------
 
-
-async def main():
-    resume_json_path = "./data/resume.json"
-    match_result_path = "./data/match_result.json"
-    output_path = "./data/cover_letter_draft.json"
-
-    try:
-        resume_json = load_json(resume_json_path)
-        jobs_meta, jobs_meta_path = load_jobs_meta()
-        match_result = load_json(match_result_path)
-    except Exception as e:
-        print(f"파일 로드 실패: {e}")
-        return
-
+async def generate_cover_letters(
+    resume_json: dict,
+    match_result: dict,
+    jobs_meta: dict
+) -> dict:
+    """
+    서버에서 바로 호출할 수 있는 함수형 로직
+    입력: resume_json, match_result, jobs_meta
+    출력: cover_letter_draft 구조(dict)
+    """
     if not match_result.get("matches"):
-        print("매칭 결과가 없습니다.")
-        return
+        raise ValueError("매칭 결과가 없습니다.")
 
     selected_job = match_result["matches"][0]
 
@@ -387,8 +408,7 @@ async def main():
             "draft": draft
         })
 
-    result = {
-        "meta_file_used": jobs_meta_path,
+    return {
         "selected_job": selected_job,
         "job_source": {
             "source": context["job_posting"].get("source", ""),
@@ -399,10 +419,53 @@ async def main():
         "cover_letters": cover_letters
     }
 
-    save_json(result, output_path)
-    print(f"자소서 초안 생성 완료: {output_path}")
 
-    for item in cover_letters:
+async def generate_cover_letters_from_files(
+    resume_json_path: str = None,
+    match_result_path: str = None,
+    output_path: str = None
+) -> dict:
+    """
+    로컬 테스트용 파일 기반 실행 함수
+    """
+    resume_json_path = resume_json_path or os.path.join(DATA_DIR, "resume.json")
+    match_result_path = match_result_path or os.path.join(DATA_DIR, "match_result.json")
+    output_path = output_path or os.path.join(DATA_DIR, "cover_letter_draft.json")
+
+    resume_json = load_json(resume_json_path)
+    match_result = load_json(match_result_path)
+    jobs_meta, _ = load_jobs_meta()
+
+    result = await generate_cover_letters(resume_json, match_result, jobs_meta)
+    save_json(result, output_path)
+    return result
+
+
+# ---------------------------
+# 출력용
+# ---------------------------
+
+def print_cover_letter_preview(draft: dict, version: str = "", strategy: str = ""):
+    print("\n" + "=" * 100)
+    if version or strategy:
+        print(f"[{version}] strategy={strategy}")
+    print(f"회사명: {draft.get('company_name', '')}")
+    print(f"직무: {draft.get('job', '')}")
+    print("=" * 100)
+    print("\n[자소서 본문]\n")
+    print(draft.get("full_cover_letter", ""))
+    print("\n" + "=" * 100)
+
+
+# ---------------------------
+# 테스트 실행용
+# ---------------------------
+
+async def main():
+    result = await generate_cover_letters_from_files()
+    print(f"자소서 초안 생성 완료: {os.path.join(DATA_DIR, 'cover_letter_draft.json')}")
+
+    for item in result["cover_letters"]:
         print_cover_letter_preview(
             item["draft"],
             version=item["version"],
