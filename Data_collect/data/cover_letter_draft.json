@@ -1,0 +1,398 @@
+{
+  "meta_file_used": "./data/jobs_metadata.json",
+  "selected_job": {
+    "faiss_id": 152,
+    "vector_score": 0.8608188629150391,
+    "final_score": 0.950818862915039,
+    "company_name": "모비젠",
+    "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+    "location": "경기 성남시 분당구 황새홀로 258번길 6",
+    "career": "신입 및 경력",
+    "summary_text": "모비젠의 Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM 채용 공고. 근무지는 경기 성남시 분당구 황새홀로 258번길 6, 경력 조건은 신입 및 경력. 주요 자격요건은 경력 : 5년 이상 (Data Scientist), 소프트웨어 기술자 경력 고급 이상, 빅데이터 분석 및 AI 모델링 가능자이며, 우대사항은 데이터 분석 관련 자격증 보유자, Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력.",
+    "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488"
+  },
+  "job_source": {
+    "source": "saramin",
+    "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488",
+    "job_posting_raw": {
+      "name": "모비젠",
+      "period": "2026-04-06",
+      "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+      "location": "경기 성남시 분당구 황새홀로 258번길 6",
+      "work": [
+        "데이터 분석 시나리오 기획 및 데이터 탐색",
+        "데이터 수집 및 전처리 작업",
+        "가설 검증 및 인사이트 발굴",
+        "모델 구현 및 분석 결과 시각화",
+        "고객 커뮤니케이션 및 프레젠테이션",
+        "ETL/ELT 데이터 파이프라인 구축",
+        "신규 서비스 프로젝트 관리",
+        "AI·빅데이터 구축 사업의 매출 성장 위한 세일즈 액션 플랜 수립",
+        "서버 개발 및 서비스 아키텍처 설계",
+        "웹 개발 및 UI/UX 설계"
+      ],
+      "qual": [
+        "경력 : 5년 이상 (Data Scientist)",
+        "소프트웨어 기술자 경력 고급 이상",
+        "빅데이터 분석 및 AI 모델링 가능자",
+        "Python, R, SQL 등 개발 언어 경험자",
+        "Tableau, PowerBI 등 시각화 솔루션 경험자",
+        "경력 : 10년 이상 (PM)",
+        "고객 요구사항 반영한 프로젝트 기획 및 실행 능력",
+        "ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어)",
+        "Java / Spring 또는 Python 기반 서버·백엔드 개발 경험 (백엔드 개발자)",
+        "JavaScript / TypeScript 기반 프론트엔드 개발 경험 (프론트엔드 개발자)"
+      ],
+      "prefer": [
+        "데이터 분석 관련 자격증 보유자",
+        "Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력",
+        "AI와 빅데이터 플랫폼 이해도",
+        "전문연구요원 신규 편입 대상자",
+        "Figma 등 디자인 협업 도구 사용 경험"
+      ],
+      "procedure": "서류 접수 -> 서류 전형 -> 1차 실무진 면접 -> 2차 임원진 면접 -> 최종 합격자 발표",
+      "docs": [
+        "이력서",
+        "자기소개서",
+        "경력 기술서",
+        "포트폴리오 (신입의 경우 필수)"
+      ],
+      "apply": "온라인 및 이메일 지원",
+      "career": "신입 및 경력",
+      "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488",
+      "source": "saramin",
+      "collected_at": "2026-04-08 10:15:25"
+    }
+  },
+  "context": {
+    "user_profile": {
+      "name": "김나영",
+      "email": "mh040129@naver.com",
+      "phone": "010-4565-6711",
+      "links": [
+        "https://github.com/dokpe01/bmks",
+        "https://github.com/dokpe01/voice_phishing_detection",
+        "https://abstracted-almandine-8dd.notion.site/2f4138dfcd108057a044f4c2a10ccb8c?pvs=74"
+      ],
+      "skills": [
+        "Python",
+        "MySQL",
+        "Keras",
+        "PyTorch",
+        "TensorFlow",
+        "Pandas",
+        "NumPy",
+        "requests",
+        "beautifulsoup",
+        "selenium",
+        "Django",
+        "ORM",
+        "RESTAPI",
+        "Template",
+        "데이터 모델링",
+        "데이터 정규화",
+        "SQL (DML, DDL, TCL, DCL)",
+        "JOIN 및 서브쿼리",
+        "데이터 시각화",
+        "Machine Learning",
+        "scikit-learn"
+      ],
+      "experiences": [
+        {
+          "company": "영등포병원",
+          "role": "원무과 사원",
+          "period": "2022. 03 ~ 2025. 04",
+          "tasks": [
+            "외래",
+            "원무",
+            "접수·예약"
+          ],
+          "achievements": []
+        },
+        {
+          "company": "월곶한방병원",
+          "role": "원무과 대리",
+          "period": "2021. 02 ~ 2021. 09",
+          "tasks": [
+            "외래",
+            "원무",
+            "접수·예약"
+          ],
+          "achievements": []
+        },
+        {
+          "company": "하나한방병원",
+          "role": "원무과 사원",
+          "period": "2020. 03 ~ 2020. 11",
+          "tasks": [
+            "외래",
+            "원무",
+            "접수·예약"
+          ],
+          "achievements": []
+        },
+        {
+          "company": "메디플렉스 세종병원",
+          "role": "외래 사원",
+          "period": "2018. 03 ~ 2019. 12",
+          "tasks": [
+            "외래",
+            "접수·예약"
+          ],
+          "achievements": []
+        }
+      ],
+      "projects": [
+        {
+          "name": "bmks",
+          "period": "",
+          "description": "",
+          "skills": [],
+          "achievements": []
+        },
+        {
+          "name": "voice_phishing_detection",
+          "period": "",
+          "description": "",
+          "skills": [],
+          "achievements": []
+        },
+        {
+          "name": "포트폴리오 (Notion)",
+          "period": "",
+          "description": "",
+          "skills": [],
+          "achievements": []
+        }
+      ],
+      "education": [
+        {
+          "school": "한양사이버대학교",
+          "major": "보건행정과",
+          "degree": "졸업"
+        },
+        {
+          "school": "경인여자대학교",
+          "major": "보건의료정보학과",
+          "degree": "졸업"
+        }
+      ],
+      "certifications": [
+        "데이터분석 준전문가 (한국데이터산업진흥원, 2025.11)",
+        "보건의료정보관리사 (보건복지부, 2019.01)",
+        "2종보통운전면허 (경찰청(운전면허시험관리단), 2016.07)"
+      ],
+      "awards": [],
+      "languages": [],
+      "desired_role": []
+    },
+    "job_posting": {
+      "company_name": "모비젠",
+      "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+      "location": "경기 성남시 분당구 황새홀로 258번길 6",
+      "career": "신입 및 경력",
+      "summary_text": "모비젠의 Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM 채용 공고. 근무지는 경기 성남시 분당구 황새홀로 258번길 6, 경력 조건은 신입 및 경력. 주요 자격요건은 경력 : 5년 이상 (Data Scientist), 소프트웨어 기술자 경력 고급 이상, 빅데이터 분석 및 AI 모델링 가능자이며, 우대사항은 데이터 분석 관련 자격증 보유자, Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력.",
+      "job_posting": {
+        "name": "모비젠",
+        "period": "2026-04-06",
+        "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+        "location": "경기 성남시 분당구 황새홀로 258번길 6",
+        "work": [
+          "데이터 분석 시나리오 기획 및 데이터 탐색",
+          "데이터 수집 및 전처리 작업",
+          "가설 검증 및 인사이트 발굴",
+          "모델 구현 및 분석 결과 시각화",
+          "고객 커뮤니케이션 및 프레젠테이션",
+          "ETL/ELT 데이터 파이프라인 구축",
+          "신규 서비스 프로젝트 관리",
+          "AI·빅데이터 구축 사업의 매출 성장 위한 세일즈 액션 플랜 수립",
+          "서버 개발 및 서비스 아키텍처 설계",
+          "웹 개발 및 UI/UX 설계"
+        ],
+        "qual": [
+          "경력 : 5년 이상 (Data Scientist)",
+          "소프트웨어 기술자 경력 고급 이상",
+          "빅데이터 분석 및 AI 모델링 가능자",
+          "Python, R, SQL 등 개발 언어 경험자",
+          "Tableau, PowerBI 등 시각화 솔루션 경험자",
+          "경력 : 10년 이상 (PM)",
+          "고객 요구사항 반영한 프로젝트 기획 및 실행 능력",
+          "ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어)",
+          "Java / Spring 또는 Python 기반 서버·백엔드 개발 경험 (백엔드 개발자)",
+          "JavaScript / TypeScript 기반 프론트엔드 개발 경험 (프론트엔드 개발자)"
+        ],
+        "prefer": [
+          "데이터 분석 관련 자격증 보유자",
+          "Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력",
+          "AI와 빅데이터 플랫폼 이해도",
+          "전문연구요원 신규 편입 대상자",
+          "Figma 등 디자인 협업 도구 사용 경험"
+        ],
+        "procedure": "서류 접수 -> 서류 전형 -> 1차 실무진 면접 -> 2차 임원진 면접 -> 최종 합격자 발표",
+        "docs": [
+          "이력서",
+          "자기소개서",
+          "경력 기술서",
+          "포트폴리오 (신입의 경우 필수)"
+        ],
+        "apply": "온라인 및 이메일 지원",
+        "career": "신입 및 경력",
+        "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488",
+        "source": "saramin",
+        "collected_at": "2026-04-08 10:15:25"
+      },
+      "url": "https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488",
+      "source": "saramin",
+      "job_text": "",
+      "document_text": "기업명: 모비젠\n모집기간: 2026-04-06\n직무: Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM\n근무지: 경기 성남시 분당구 황새홀로 258번길 6\n주요업무: 데이터 분석 시나리오 기획 및 데이터 탐색, 데이터 수집 및 전처리 작업, 가설 검증 및 인사이트 발굴, 모델 구현 및 분석 결과 시각화, 고객 커뮤니케이션 및 프레젠테이션, ETL/ELT 데이터 파이프라인 구축, 신규 서비스 프로젝트 관리, AI·빅데이터 구축 사업의 매출 성장 위한 세일즈 액션 플랜 수립, 서버 개발 및 서비스 아키텍처 설계, 웹 개발 및 UI/UX 설계\n자격요건: 경력 : 5년 이상 (Data Scientist), 소프트웨어 기술자 경력 고급 이상, 빅데이터 분석 및 AI 모델링 가능자, Python, R, SQL 등 개발 언어 경험자, Tableau, PowerBI 등 시각화 솔루션 경험자, 경력 : 10년 이상 (PM), 고객 요구사항 반영한 프로젝트 기획 및 실행 능력, ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어), Java / Spring 또는 Python 기반 서버·백엔드 개발 경험 (백엔드 개발자), JavaScript / TypeScript 기반 프론트엔드 개발 경험 (프론트엔드 개발자)\n우대사항: 데이터 분석 관련 자격증 보유자, Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력, AI와 빅데이터 플랫폼 이해도, 전문연구요원 신규 편입 대상자, Figma 등 디자인 협업 도구 사용 경험\n채용절차: 서류 접수 -> 서류 전형 -> 1차 실무진 면접 -> 2차 임원진 면접 -> 최종 합격자 발표\n제출서류: 이력서, 자기소개서, 경력 기술서, 포트폴리오 (신입의 경우 필수)\n지원방법: 온라인 및 이메일 지원\n경력: 신입 및 경력\n출처: saramin\n수집일시: 2026-04-08 10:15:25\nURL: https://www.saramin.co.kr/zf_user/jobs/relay/view?view_type=search&rec_idx=53412584&location=ts&searchword=PM&searchType=search&paid_fl=n&search_uuid=4eb1c324-284f-4352-bbf4-d39dbbe8f488"
+    },
+    "company_analysis": {},
+    "retrieval_info": {
+      "vector_score": 0.8608188629150391,
+      "final_score": 0.950818862915039
+    }
+  },
+  "cover_letters": [
+    {
+      "version": "v1",
+      "strategy": "balanced",
+      "draft": {
+        "company_name": "모비젠",
+        "job": "Data Scientist",
+        "support_motivation": "데이터 분석과 머신러닝 역량을 실무에 적용해 실제 문제 해결에 기여하고자 지원한다. 보건의료정보학 전공과 보건행정 배경을 통해 도메인 이해를 갖추었고, 최근 데이터분석 준전문가 자격 취득을 통해 분석 기법과 절차를 체계화했다. 모비젠의 데이터 분석 시나리오 기획 및 모델 구현 업무는 제 기술 역량과 도메인 지식을 결합해 가치 있는 인사이트를 산출할 수 있는 기회로 판단된다. 이를 바탕으로 실무 중심의 분석 과제를 수행하고자 한다.",
+        "job_fit": "Python, MySQL/SQL, Pandas, NumPy, scikit-learn, Keras, PyTorch, TensorFlow 등 데이터 처리·모델링 툴을 보유하고 있어 모델 구현 및 분석 결과 시각화 업무에 적합하다. 데이터 모델링, 데이터 정규화, JOIN 및 서브쿼리 등 SQL 기반 역량은 데이터 수집·전처리와 ETL/ELT 설계에 바로 활용할 수 있다. Django, ORM, REST API 경험은 백엔드 연동이나 서비스화 과정에서 데이터 파이프라인을 구축하는 데 도움이 된다. GitHub에 보유한 프로젝트(bmks, voice_phishing_detection)를 통해 코드 기반 작업 흐름을 관리한 경험이 있다.",
+        "collaboration_problem_solving": "여러 병원에서 외래·원무·접수 업무를 수행하며 환자 및 의료진과의 직접 소통으로 요구사항을 파악하고 우선순위를 조정해왔다. 현장 중심의 업무 수행은 명확한 커뮤니케이션과 문서화, 프로세스 준수가 중요함을 일깨워 주었고, 이는 고객 커뮤니케이션·프레젠테이션 및 프로젝트 수행 시 신뢰 형성에 기여할 것이다. 기술적 해결이 필요할 때는 관련 데이터를 정리·분석하여 문제 원인을 제시하고, 이해관계자와 협의해 실행 가능한 개선안으로 연결하는 태도를 유지해왔다.",
+        "future_contribution": "입사 후 데이터 분석 시나리오 수립부터 데이터 전처리, 모델 구현 및 시각화까지 전 과정에 참여해 실무 중심의 결과물을 제공하겠다. 보건의료 도메인 이해를 바탕으로 고객 요구사항을 데이터 관점으로 재구성하고, Python 기반 파이프라인과 모델을 통해 서비스 가치 증대에 기여하겠다. 또한 분석 결과를 비기술자에게 명확히 전달해 사업 성과로 연결하는 역할을 수행하겠다. 실무에 바로 적용 가능한 분석 역량으로 조직의 목표 달성에 기여하겠다는 의지를 가지고 있다.",
+        "evidence_mapping": [
+          {
+            "job_requirement": "Python, R, SQL 등 개발 언어 경험자",
+            "user_evidence": "Python, MySQL, SQL (DML, DDL, TCL, DCL), JOIN 및 서브쿼리 사용 경험"
+          },
+          {
+            "job_requirement": "Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력",
+            "user_evidence": "Keras, PyTorch, TensorFlow 보유"
+          },
+          {
+            "job_requirement": "데이터 분석 관련 자격증 보유자",
+            "user_evidence": "데이터분석 준전문가 (한국데이터산업진흥원, 2025.11)"
+          },
+          {
+            "job_requirement": "모델 구현 및 분석 결과 시각화",
+            "user_evidence": "scikit-learn, Pandas, NumPy, 데이터 시각화 도구 숙련 및 GitHub 프로젝트(bmks, voice_phishing_detection) 보유"
+          },
+          {
+            "job_requirement": "ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어)",
+            "user_evidence": "데이터 모델링, 데이터 정규화, SQL과 ORM/Django를 통한 데이터 흐름 이해"
+          },
+          {
+            "job_requirement": "고객 커뮤니케이션 및 프레젠테이션",
+            "user_evidence": "영등포병원 등 다수 병원에서 외래·원무·접수 업무를 수행하며 환자·의료진과의 직접 소통 경험"
+          }
+        ],
+        "full_cover_letter": "데이터 분석과 머신러닝 역량을 실무에 적용해 실제 문제 해결에 기여하고자 지원한다. 보건의료정보학 전공과 보건행정 배경을 통해 도메인 이해를 갖추었고, 최근 데이터분석 준전문가 자격 취득을 통해 분석 기법과 절차를 체계화했다. 모비젠의 데이터 분석 시나리오 기획 및 모델 구현 업무는 제 기술 역량과 도메인 지식을 결합해 가치 있는 인사이트를 산출할 수 있는 기회로 판단된다. 이를 바탕으로 실무 중심의 분석 과제를 수행하고자 한다.\n\nPython, MySQL/SQL, Pandas, NumPy, scikit-learn, Keras, PyTorch, TensorFlow 등 데이터 처리·모델링 툴을 보유하고 있어 모델 구현 및 분석 결과 시각화 업무에 적합하다. 데이터 모델링, 데이터 정규화, JOIN 및 서브쿼리 등 SQL 기반 역량은 데이터 수집·전처리와 ETL/ELT 설계에 바로 활용할 수 있다. Django, ORM, REST API 경험은 백엔드 연동이나 서비스화 과정에서 데이터 파이프라인을 구축하는 데 도움이 된다. GitHub에 보유한 프로젝트(bmks, voice_phishing_detection)를 통해 코드 기반 작업 흐름을 관리한 경험이 있다.\n\n여러 병원에서 외래·원무·접수 업무를 수행하며 환자 및 의료진과의 직접 소통으로 요구사항을 파악하고 우선순위를 조정해왔다. 현장 중심의 업무 수행은 명확한 커뮤니케이션과 문서화, 프로세스 준수가 중요함을 일깨워 주었고, 이는 고객 커뮤니케이션·프레젠테이션 및 프로젝트 수행 시 신뢰 형성에 기여할 것이다. 기술적 해결이 필요할 때는 관련 데이터를 정리·분석하여 문제 원인을 제시하고, 이해관계자와 협의해 실행 가능한 개선안으로 연결하는 태도를 유지해왔다.\n\n입사 후 데이터 분석 시나리오 수립부터 데이터 전처리, 모델 구현 및 시각화까지 전 과정에 참여해 실무 중심의 결과물을 제공하겠다. 보건의료 도메인 이해를 바탕으로 고객 요구사항을 데이터 관점으로 재구성하고, Python 기반 파이프라인과 모델을 통해 서비스 가치 증대에 기여하겠다. 또한 분석 결과를 비기술자에게 명확히 전달해 사업 성과로 연결하는 역할을 수행하겠다. 실무에 바로 적용 가능한 분석 역량으로 조직의 목표 달성에 기여하겠다는 의지를 가지고 있다.\n\n이러한 경험을 바탕으로 서비스의 문제를 구조적으로 정의하고, 데이터와 시스템 흐름을 연결해 실질적인 개선을 만들어내는 데 기여하겠습니다."
+      }
+    },
+    {
+      "version": "v2",
+      "strategy": "job_fit_focus",
+      "draft": {
+        "company_name": "모비젠",
+        "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+        "support_motivation": "모비젠 채용공고의 데이터 분석 시나리오 기획, ETL/ELT 파이프라인 구축 및 모델 구현 업무는 제가 쌓아온 기술 역량과 직접적으로 맞닿아 있어 지원하게 되었다. 데이터 기반 인사이트로 고객 요구를 기술적으로 설명하고 실무에 적용하는 과정이 중요하다고 판단하며, 그 점에서 기여할 여지가 크다고 느꼈다. 보건의료정보학 전공과 데이터분석 준전문가 자격을 통해 도메인 이해와 기초 분석 역량을 갖추었고, 실제 분석·모델링 도구들을 다뤄본 경험이 있다. 이러한 배경을 바탕으로 데이터 중심의 문제 정의와 실무 적용 가능성에 집중해 업무를 수행하고자 한다.",
+        "job_fit": "Python, MySQL/SQL, Pandas, NumPy, scikit-learn, Keras, PyTorch, TensorFlow 등 보유 기술이 데이터 수집·전처리, 모델 구현 및 분석 결과 시각화 업무에 직접적으로 연결된다. 개인 프로젝트(bmks, voice_phishing_detection)에서 데이터 전처리와 모델 구현을 수행하며 ML 프레임워크 활용 경험을 쌓았다. 데이터 모델링, 데이터 정규화, JOIN 및 서브쿼리 등 SQL 역량은 ETL/ELT 파이프라인 구성과 데이터 품질 관리에 적용 가능하다. 또한 Django, ORM, REST API 경험은 서버·백엔드와 데이터 파이프라인을 연계하는 기술적 역할 수행에 적합하다.",
+        "collaboration_problem_solving": "병원 원무과(외래·접수·예약) 근무를 통해 환자 응대와 의료진 간 조율 업무를 수행하며 현장 커뮤니케이션과 업무 우선순위 판단 능력을 길렀다. 현장의 요구사항을 정확히 받아 정리하고 전달하는 경험은 고객 커뮤니케이션 및 프레젠테이션 업무에서 실무적인 강점이 된다. 기술적으로는 SQL 기반 데이터 검증과 데이터 모델링을 통해 데이터 정합성 이슈를 진단하고 해결하는 방식으로 문제에 접근해왔다. 이러한 현장 소통 능력과 기술적 문제 해결 방식은 프로젝트 진행 시 실무팀과 고객을 잇는 역할을 할 수 있다.",
+        "future_contribution": "입사 후에는 우선 ETL 파이프라인과 데이터 정제 프로세스를 구축·표준화하여 분석의 기초 데이터 품질을 확보하겠다. PyTorch·TensorFlow·Keras 기반 모델 구현과 시각화 결과물을 통해 고객 의사결정에 직접 활용 가능한 인사이트를 제공하겠다. 보건의료 도메인 이해와 현장 커뮤니케이션 경험을 결합해 고객 요구를 기술적 산출물로 전환하고, 기술팀과 영업·PM 간 협업을 원활히 이어 프로젝트 성과로 연결시키겠다. 이를 통해 실무 프로젝트의 데이터 파이프라인과 모델 구현을 책임지고 팀의 성과를 높이겠다.",
+        "evidence_mapping": [
+          {
+            "job_requirement": "Python, R, SQL 등 개발 언어 경험자",
+            "user_evidence": "Python, MySQL, SQL (DML, DDL, TCL, DCL), JOIN 및 서브쿼리 보유"
+          },
+          {
+            "job_requirement": "Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력",
+            "user_evidence": "PyTorch, TensorFlow, Keras 사용 경험"
+          },
+          {
+            "job_requirement": "데이터 분석 관련 자격증 보유자 (우대)",
+            "user_evidence": "데이터분석 준전문가 (한국데이터산업진흥원, 2025.11)"
+          },
+          {
+            "job_requirement": "ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어)",
+            "user_evidence": "데이터 모델링, 데이터 정규화, SQL을 통한 데이터 전처리 및 파이프라인 구성 역량"
+          },
+          {
+            "job_requirement": "모델 구현 및 분석 결과 시각화",
+            "user_evidence": "scikit-learn, Keras, PyTorch, TensorFlow 및 데이터 시각화 경험 보유"
+          },
+          {
+            "job_requirement": "고객 커뮤니케이션 및 프레젠테이션",
+            "user_evidence": "영등포병원·월곶한방병원 등 원무과 근무로 환자 접수·예약·원무 업무 수행 경험, 현장 커뮤니케이션 역량 보유"
+          },
+          {
+            "job_requirement": "Java / Spring 또는 Python 기반 서버·백엔드 개발 경험 (백엔드 개발자)",
+            "user_evidence": "Django, ORM, REST API 경험으로 Python 기반 백엔드 연계 가능"
+          }
+        ],
+        "full_cover_letter": "모비젠 채용공고의 데이터 분석 시나리오 기획, ETL/ELT 파이프라인 구축 및 모델 구현 업무는 제가 쌓아온 기술 역량과 직접적으로 맞닿아 있어 지원하게 되었다. 데이터 기반 인사이트로 고객 요구를 기술적으로 설명하고 실무에 적용하는 과정이 중요하다고 판단하며, 그 점에서 기여할 여지가 크다고 느꼈다. 보건의료정보학 전공과 데이터분석 준전문가 자격을 통해 도메인 이해와 기초 분석 역량을 갖추었고, 실제 분석·모델링 도구들을 다뤄본 경험이 있다. 이러한 배경을 바탕으로 데이터 중심의 문제 정의와 실무 적용 가능성에 집중해 업무를 수행하고자 한다.\n\nPython, MySQL/SQL, Pandas, NumPy, scikit-learn, Keras, PyTorch, TensorFlow 등 보유 기술이 데이터 수집·전처리, 모델 구현 및 분석 결과 시각화 업무에 직접적으로 연결된다. 개인 프로젝트(bmks, voice_phishing_detection)에서 데이터 전처리와 모델 구현을 수행하며 ML 프레임워크 활용 경험을 쌓았다. 데이터 모델링, 데이터 정규화, JOIN 및 서브쿼리 등 SQL 역량은 ETL/ELT 파이프라인 구성과 데이터 품질 관리에 적용 가능하다. 또한 Django, ORM, REST API 경험은 서버·백엔드와 데이터 파이프라인을 연계하는 기술적 역할 수행에 적합하다.\n\n병원 원무과(외래·접수·예약) 근무를 통해 환자 응대와 의료진 간 조율 업무를 수행하며 현장 커뮤니케이션과 업무 우선순위 판단 능력을 길렀다. 현장의 요구사항을 정확히 받아 정리하고 전달하는 경험은 고객 커뮤니케이션 및 프레젠테이션 업무에서 실무적인 강점이 된다. 기술적으로는 SQL 기반 데이터 검증과 데이터 모델링을 통해 데이터 정합성 이슈를 진단하고 해결하는 방식으로 문제에 접근해왔다. 이러한 현장 소통 능력과 기술적 문제 해결 방식은 프로젝트 진행 시 실무팀과 고객을 잇는 역할을 할 수 있다.\n\n입사 후에는 우선 ETL 파이프라인과 데이터 정제 프로세스를 구축·표준화하여 분석의 기초 데이터 품질을 확보하겠다. PyTorch·TensorFlow·Keras 기반 모델 구현과 시각화 결과물을 통해 고객 의사결정에 직접 활용 가능한 인사이트를 제공하겠다. 보건의료 도메인 이해와 현장 커뮤니케이션 경험을 결합해 고객 요구를 기술적 산출물로 전환하고, 기술팀과 영업·PM 간 협업을 원활히 이어 프로젝트 성과로 연결시키겠다. 이를 통해 실무 프로젝트의 데이터 파이프라인과 모델 구현을 책임지고 팀의 성과를 높이겠다.\n\n이러한 경험을 바탕으로 서비스의 문제를 구조적으로 정의하고, 데이터와 시스템 흐름을 연결해 실질적인 개선을 만들어내는 데 기여하겠습니다."
+      }
+    },
+    {
+      "version": "v3",
+      "strategy": "motivation_focus",
+      "draft": {
+        "company_name": "모비젠",
+        "job": "Data Scientist, 데이터 엔지니어, 구축 사업 PM, 영업대표, 백엔드 개발자, 프론트엔드 개발자, 풀스택 개발자, 생성형 AI 에이전트 개발자, AI 에이전트 기획자, SE, 통신 OSS 개발 PM",
+        "support_motivation": "병원 원무와 외래 업무를 수행하며 환자 정보와 운영 데이터가 서비스 품질과 업무 효율에 직접적인 영향을 준다는 점을 체감했다. 데이터 기반의 분석과 자동화로 행정·운영 프로세스의 불일치와 반복 업무를 개선할 수 있다는 문제의식을 갖고 있다. 모비젠의 데이터 분석·AI 모델링과 ETL/데이터 파이프라인 구축 업무는 현장에서 얻은 도메인 이해를 기술 역량으로 연결할 기회로 판단되어 지원하게 되었다. 보건의료정보 전공과 데이터분석 관련 자격을 바탕으로 의료데이터 관점에서 실질적 인사이트를 제공하고자 한다.",
+        "job_fit": "Python, MySQL 및 SQL 기반 데이터 처리 역량과 Pandas·NumPy를 통한 데이터 전처리·탐색 능력을 보유하고 있어 데이터 수집·전처리 및 가설검증 업무에 적합하다. Keras, PyTorch, TensorFlow, scikit-learn 등 머신러닝·딥러닝 프레임워크를 활용할 수 있어 모델 구현과 분석 결과 검증을 수행할 수 있다. 데이터 모델링, 데이터 정규화, ORM과 Django·RESTAPI 경험을 통해 ETL/ELT 파이프라인과 Python 기반 서버 연동 업무에도 기여할 수 있다. 개인 프로젝트(bmks, voice_phishing_detection)와 포트폴리오를 통해 실제 데이터 흐름을 설계하고 모델을 적용해본 경험을 업무에 적용하겠다.",
+        "collaboration_problem_solving": "원무·접수 업무를 수행하면서 환자, 의료진 등 다양한 이해관계자와의 커뮤니케이션을 통해 우선순위를 조정하고 문제를 해결해왔다. 구체적 요구사항을 수집하고 정형화된 데이터로 정리하는 과정에서 데이터 모델링과 정규화의 필요성을 인지했고, 이를 바탕으로 분석 시나리오를 설계할 수 있다. 분석 결과를 이해하기 쉬운 형태로 정리하고 시각화해 현장 의사결정에 연결하는 역량을 갖추었으며, 여러 직군과의 협업 환경에서도 기술적 설명과 조율을 수행할 준비가 되어 있다.",
+        "future_contribution": "입사 후에는 의료 도메인 경험을 활용해 ETL 파이프라인 설계와 데이터 정합성 확보 작업을 우선적으로 추진하겠다. 모델 구현 과정에서는 검증 가능한 가설 기반 접근으로 성능 향상과 실무 적용 가능성을 높이고, Django/RESTAPI 역량으로 분석 결과의 서비스 연동을 지원하겠다. 또한 현장과의 소통을 통해 고객 요구를 데이터 솔루션으로 연결해 AI·빅데이터 구축 사업의 가치 창출에 기여하겠다. 의료 데이터 기반의 실무형 분석과 서비스화로 조직 성과에 직접 기여하겠다.",
+        "evidence_mapping": [
+          {
+            "job_requirement": "Python, R, SQL 등 개발 언어 경험자",
+            "user_evidence": "보유 기술: Python, MySQL, SQL (DML, DDL, TCL, DCL), JOIN 및 서브쿼리"
+          },
+          {
+            "job_requirement": "Pytorch / TensorFlow 등 딥러닝 프레임워크 활용 능력",
+            "user_evidence": "보유 기술: PyTorch, TensorFlow, Keras"
+          },
+          {
+            "job_requirement": "데이터 분석 관련 자격증 보유자",
+            "user_evidence": "데이터분석 준전문가 (한국데이터산업진흥원, 2025.11)"
+          },
+          {
+            "job_requirement": "ETL/ELT 데이터 엔지니어링 경험 (데이터 엔지니어)",
+            "user_evidence": "데이터 모델링, 데이터 정규화, SQL 및 ORM, Django를 통한 데이터 처리·연동 경험 역량 보유"
+          },
+          {
+            "job_requirement": "Tableau, PowerBI 등 시각화 솔루션 경험자",
+            "user_evidence": "데이터 시각화 역량 보유 및 Pandas/NumPy 기반 데이터 정리·시각화 능력"
+          },
+          {
+            "job_requirement": "데이터 분석 시나리오 기획 및 데이터 탐색",
+            "user_evidence": "보건의료정보 전공과 병원 원무·외래 업무를 통해 실무 데이터 이해와 분석 시나리오 수립 역량 보유"
+          },
+          {
+            "job_requirement": "모델 구현 및 분석 결과 시각화",
+            "user_evidence": "scikit-learn, PyTorch, TensorFlow 등으로 모델 구현 가능하고 데이터 시각화로 결과를 설명할 수 있음"
+          },
+          {
+            "job_requirement": "고객 커뮤니케이션 및 프레젠테이션",
+            "user_evidence": "원무·접수·예약 업무 수행을 통한 환자 및 의료진 대상 실무 커뮤니케이션 경험"
+          },
+          {
+            "job_requirement": "Java / Spring 또는 Python 기반 서버·백엔드 개발 경험 (백엔드 개발자)",
+            "user_evidence": "Python 기반 Django, RESTAPI, ORM 기술 보유로 서버 연동 및 서비스 아키텍처와의 접점 구현 가능"
+          },
+          {
+            "job_requirement": "포트폴리오 (신입의 경우 필수)",
+            "user_evidence": "개인 프로젝트: bmks, voice_phishing_detection 및 포트폴리오 보유(프로젝트 명확히 기재)"
+          },
+          {
+            "job_requirement": "경력 : 5년 이상 (Data Scientist)",
+            "user_evidence": "병원 근무 경험: 메디플렉스 세종병원(2018.03~2019.12), 하나한방병원(2020.03~2020.11), 월곶한방병원(2021.02~2021.09), 영등포병원(2022.03~2025.04)"
+          }
+        ],
+        "full_cover_letter": "병원 원무와 외래 업무를 수행하며 환자 정보와 운영 데이터가 서비스 품질과 업무 효율에 직접적인 영향을 준다는 점을 체감했다. 데이터 기반의 분석과 자동화로 행정·운영 프로세스의 불일치와 반복 업무를 개선할 수 있다는 문제의식을 갖고 있다. 모비젠의 데이터 분석·AI 모델링과 ETL/데이터 파이프라인 구축 업무는 현장에서 얻은 도메인 이해를 기술 역량으로 연결할 기회로 판단되어 지원하게 되었다. 보건의료정보 전공과 데이터분석 관련 자격을 바탕으로 의료데이터 관점에서 실질적 인사이트를 제공하고자 한다.\n\nPython, MySQL 및 SQL 기반 데이터 처리 역량과 Pandas·NumPy를 통한 데이터 전처리·탐색 능력을 보유하고 있어 데이터 수집·전처리 및 가설검증 업무에 적합하다. Keras, PyTorch, TensorFlow, scikit-learn 등 머신러닝·딥러닝 프레임워크를 활용할 수 있어 모델 구현과 분석 결과 검증을 수행할 수 있다. 데이터 모델링, 데이터 정규화, ORM과 Django·RESTAPI 경험을 통해 ETL/ELT 파이프라인과 Python 기반 서버 연동 업무에도 기여할 수 있다. 개인 프로젝트(bmks, voice_phishing_detection)와 포트폴리오를 통해 실제 데이터 흐름을 설계하고 모델을 적용해본 경험을 업무에 적용하겠다.\n\n원무·접수 업무를 수행하면서 환자, 의료진 등 다양한 이해관계자와의 커뮤니케이션을 통해 우선순위를 조정하고 문제를 해결해왔다. 구체적 요구사항을 수집하고 정형화된 데이터로 정리하는 과정에서 데이터 모델링과 정규화의 필요성을 인지했고, 이를 바탕으로 분석 시나리오를 설계할 수 있다. 분석 결과를 이해하기 쉬운 형태로 정리하고 시각화해 현장 의사결정에 연결하는 역량을 갖추었으며, 여러 직군과의 협업 환경에서도 기술적 설명과 조율을 수행할 준비가 되어 있다.\n\n입사 후에는 의료 도메인 경험을 활용해 ETL 파이프라인 설계와 데이터 정합성 확보 작업을 우선적으로 추진하겠다. 모델 구현 과정에서는 검증 가능한 가설 기반 접근으로 성능 향상과 실무 적용 가능성을 높이고, Django/RESTAPI 역량으로 분석 결과의 서비스 연동을 지원하겠다. 또한 현장과의 소통을 통해 고객 요구를 데이터 솔루션으로 연결해 AI·빅데이터 구축 사업의 가치 창출에 기여하겠다. 의료 데이터 기반의 실무형 분석과 서비스화로 조직 성과에 직접 기여하겠다.\n\n이러한 경험을 바탕으로 서비스의 문제를 구조적으로 정의하고, 데이터와 시스템 흐름을 연결해 실질적인 개선을 만들어내는 데 기여하겠습니다."
+      }
+    }
+  ]
+}

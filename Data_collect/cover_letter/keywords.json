@@ -1,0 +1,60 @@
+{
+  "백엔드 개발자": [
+    "백엔드", "backend", "server", "api", "rest api",
+    "django", "flask", "fastapi", "spring",
+    "java", "python", "node.js", "express",
+    "database", "db", "mysql", "postgresql", "orm"
+  ],
+  "프론트엔드 개발자": [
+    "프론트엔드", "frontend", "ui", "ux",
+    "html", "css", "javascript", "typescript",
+    "react", "vue", "next.js",
+    "웹", "화면 설계", "사용자 인터페이스"
+  ],
+  "웹 기획자": [
+    "웹 기획", "서비스 기획", "기획",
+    "화면 설계", "ui 흐름", "ux",
+    "ux 기획", "ia", "스토리보드",
+    "요구사항 정의", "정책 설계", "프로세스 설계",
+    "사용자 흐름", "웹 서비스"
+  ],
+  "데이터 엔지니어": [
+    "데이터 엔지니어", "data engineer",
+    "데이터 파이프라인", "etl", "elt",
+    "sql", "python", "pandas", "numpy",
+    "airflow", "spark", "hadoop",
+    "warehouse", "data lake",
+    "db", "mysql", "postgresql",
+    "bigquery", "redshift"
+  ],
+  "경영기획": [
+    "경영기획", "사업기획", "전략기획",
+    "시장 분석", "사업 전략", "경영 전략",
+    "성과 분석", "지표 관리",
+    "예산", "손익",
+    "비즈니스", "운영 전략"
+  ],
+  "서비스기획": [
+    "서비스기획", "서비스 기획", "기획",
+    "pm", "po",
+    "프로덕트", "product",
+    "서비스", "ux",
+    "ui 흐름", "화면 설계",
+    "요구사항 정의", "정책 설계",
+    "프로세스 개선",
+    "데이터 기반", "사용자 경험"
+  ],
+  "PM/PO": [
+    "pm", "po",
+    "product manager", "product owner",
+    "프로덕트 매니저", "프로덕트 오너",
+    "서비스기획", "서비스 기획", "기획",
+    "프로덕트", "product",
+    "로드맵",
+    "요구사항 정의",
+    "화면 설계",
+    "프로세스 설계",
+    "데이터 기반",
+    "가설", "실행", "검증"
+  ]
+}
