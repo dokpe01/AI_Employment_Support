@@ -18,6 +18,9 @@ import fitz
 import pydantic
 import json
 from openai import OpenAI
+from database import get_db   
+
+from interview.api import router as interview_router
 
 try:
     from database import engine, SessionLocal
@@ -30,6 +33,7 @@ load_dotenv(encoding="utf-8")
 KIT_ID = os.getenv("FA_KIT_ID")
 client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
+app.include_router(interview_router, prefix="/api/interview")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -279,30 +283,53 @@ async def update_profile(
     return RedirectResponse(url="/profile", status_code=303)
 
 @app.get("/interview", response_class=HTMLResponse)
-async def interview_page(request: Request):
+async def interview_page(
+    request: Request,
+    job_id: int = None,
+    db: Session = Depends(get_db)
+):
     token = request.cookies.get("access_token")
     if not token:
         return RedirectResponse(url="/login", status_code=302)
 
     try:
         token_value = str(token).replace("Bearer ", "").strip()
-        
         payload = jwt.get_unverified_claims(token_value)
         u_name = str(payload.get("user_name", "사용자"))
 
+        selected_job = None
+        job_list = []
+
+        print("DEBUG job_id:", job_id)
+
+        if job_id:
+            selected_job = db.query(models.Enter).filter(models.Enter.id == job_id).first()
+            print("DEBUG selected_job:", selected_job)
+
+            if not selected_job:
+                return RedirectResponse(url="/", status_code=302)
+        else:
+            job_list, _ = crud.get_recent_enters(
+                db,
+                page=1,
+                size=30,
+                source="전체"
+            )
+
         template = templates.get_template("interview.html")
-        
         content = template.render({
             "request": request,
             "itv_user_name": u_name,
-            "kit_id": KIT_ID
+            "kit_id": KIT_ID,
+            "selected_job": selected_job,
+            "job_list": job_list,
         })
-        
+
         return HTMLResponse(content=content)
 
     except Exception as e:
-        print(f"DEBUG: FATAL_ERROR_LOG -> {type(e).__name__}: {str(e)}")
-        return RedirectResponse(url="/login", status_code=302)
+        print(f"DEBUG interview_page ERROR -> {type(e).__name__}: {e}")
+        raise e
 
 def extract_layout_structured_data(file_content):
     doc = fitz.open(stream=file_content, filetype="pdf")

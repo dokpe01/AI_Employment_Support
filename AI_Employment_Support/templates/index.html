@@ -93,13 +93,19 @@
                                     </span>
                                 </div>
                             </div>
-                            
-                            <div style="flex-shrink: 0; margin-left: 20px;">
-                                <button class="btn-detail" onclick="window.open('{{ job.url }}', '_blank')" 
-                                        style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                    공고 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
-                                </button>
-                            </div>
+                            <div style="flex-shrink: 0; margin-left: 20px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+
+                            <a href="/interview?job_id={{ job.id }}"
+                            style="padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: #1677ff; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                AI 모의면접
+                            </a>
+
+                            <button class="btn-detail" onclick="window.open('{{ job.url }}', '_blank')" 
+                                    style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                공고 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+                            </button>
+
+                        </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -130,7 +136,6 @@
                 {% endif %}
                 </div>
             </div>
-
             <div style="padding-top: 20px; border-top: 1px solid var(--border-color);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
                     <div>
@@ -156,7 +161,6 @@
                         {% endfor %}
                     </div>
                 </div>
-
                 <div class="crawling-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
                     {% for job in recent_jobs %}
                     <div class="crawl-item" onclick="window.open('{{ job.url }}', '_blank')" 
@@ -178,11 +182,9 @@
                                 {{ job.d_day }}
                             </span>
                         </div>
-
                         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0 0 15px 0; opacity: 0.6;">
-
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
                                 <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
                                     <i class="fa-regular fa-calendar"></i> {{ job.period }}
                                 </span>
@@ -190,8 +192,19 @@
                                     <i class="fa-solid fa-location-dot"></i> {{ job.location }}
                                 </span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                                <a href="/interview?job_id={{ job.id }}"
+                                onclick="event.stopPropagation();"
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                    AI 모의면접
+                                </a>
+
+                                <a href="{{ job.url }}"
+                                target="_blank"
+                                onclick="event.stopPropagation();"
+                                style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
