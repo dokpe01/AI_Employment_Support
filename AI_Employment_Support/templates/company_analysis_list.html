@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}기업 분석 | AI Employment Support{% endblock %}
+
+{% block extra_style %}
+<style>
+    :root {
+        --point-red: #ff4d4f;
+        --point-red-bg: rgba(255, 77, 79, 0.06);
+        --point-orange: #FFB266;
+        --point-orange-bg: rgba(255, 178, 102, 0.10);
+    }
+
+    [data-theme='dark'] {
+        --point-red: #ff7875;
+        --point-red-bg: rgba(255, 120, 117, 0.1);
+    }
+
+    .btn-logout {
+        background: transparent !important;
+        color: var(--point-red) !important;
+        border: 1px solid var(--point-red) !important;
+        transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+        background: var(--point-red-bg) !important;
+        transform: translateY(-1px);
+    }
+
+    .main-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .main-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 300px !important;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .list-section {
+        min-width: 0;
+    }
+
+    .sidebar-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .role-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: var(--point-orange-bg);
+        color: var(--point-orange);
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin-right: 8px;
+        margin-top: 8px;
+    }
+
+    @media (max-width: 960px) {
+        .main-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+.d-day {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+}
+
+.d-day-active {
+    background: #fff1f0;
+    color: #ff4d4f;
+}
+
+.d-day-normal {
+    background: #f5f5f5;
+    color: #8c8c8c;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar" style="background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+        <a class="navbar-brand" href="/" style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;">
+            <i class="fa-brands fa-openai" style="color: var(--accent);"></i>AI Employment Support
+        </a>
+        <button id="themeToggle" class="theme-toggle" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="main-grid">
+        <div class="list-section">
+
+            <!-- AI 추천 채용공고 -->
+            <div style="margin-bottom: 50px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="width: 4px; height: 24px; background: var(--point-orange); border-radius: 2px;"></div>
+                    <div>
+                        <h2 style="font-weight: 800; margin: 0;">AI 추천 채용공고</h2>
+                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.85rem;">
+                            회원님의 프로필을 기반으로 기업 분석이 유용한 공고를 추천합니다
+                        </p>
+                    </div>
+                </div>
+
+                {% if desired_roles %}
+                <div style="margin-bottom: 18px;">
+                    <div style="font-size: 0.84rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
+                        희망 직무
+                    </div>
+                    {% for role in desired_roles.split(",") %}
+                        {% if role.strip() %}
+                        <span class="role-chip">
+                            <i class="fa-solid fa-briefcase"></i> {{ role.strip() }}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="job-list" style="max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+                    {% if user and recommended_jobs %}
+                        {% for job in recommended_jobs %}
+                        <div class="job-card shadow-sm" style="border: 1px solid var(--border-color); border-radius: 12px; background: var(--card-bg); overflow: hidden;">
+                            <div style="display: flex; align-items: center; padding: 18px 24px;">
+                                <div style="width: 44px; height: 44px; margin-right: 18px; flex-shrink: 0; background: rgba(255, 178, 102, 0.10); color: var(--point-orange); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-chart-simple" style="font-size: 1.2rem;"></i>
+                                </div>
+
+                                <div style="flex-grow: 1; min-width: 0;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+                                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">
+                                            {{ job.job.split(' ')[0] }}
+                                        </span>
+                                        <span style="font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: #fff1f0; color: #ff4d4f;">
+                                            {{ job.d_day }}
+                                        </span>
+                                    </div>
+
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+                                        <h4 style="font-weight: 800; font-size: 1.1rem; margin: 0; color: var(--text-main); white-space: nowrap; flex-shrink: 0;">
+                                            {{ job.name }}
+                                        </h4>
+                                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            {{ job.job }}
+                                        </p>
+                                    </div>
+
+                                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                                        <span style="color: var(--text-muted); font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-location-dot" style="font-size: 0.7rem; margin-right: 3px;"></i> {{ job.location }}
+                                        </span>
+                                        <span style="color: var(--accent); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                                            <i class="fa-solid fa-bolt" style="font-size: 0.75rem;"></i> {{ job.match_rate }}% Match
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div style="flex-shrink: 0; margin-left: 20px;">
+                                    <a href="/company-analysis/{{ job.id }}"
+                                    style="padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                        기업 분석 보기
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="padding: 40px; text-align: center; background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: 12px;">
+                            <div style="margin-bottom: 15px; color: var(--text-muted);">
+                                <i class="fa-solid fa-spinner" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                            </div>
+                            <h5 style="font-weight: 700; color: var(--text-main); margin-bottom: 8px;">추천 공고를 준비 중입니다</h5>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+                                프로필 기반 추천 공고가 아직 충분하지 않습니다.<br>
+                                최신 공고에서 원하는 기업 분석을 먼저 확인해보세요.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 최신 공고 -->
+            <div style="padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
+                    <div style="width: 4px; height: 24px; background: var(--accent); border-radius: 2px;"></div>
+                    <div>
+                        <h2 style="font-weight: 800; margin: 0; font-size: 1.4rem; color: var(--text-main);">최신 공고</h2>
+                        <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.85rem;">최근 수집된 공고 중 기업 분석을 확인할 수 있습니다</p>
+                    </div>
+                </div>
+
+                <div class="crawling-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+                    {% for job in recent_jobs %}
+                    <div class="crawl-item"
+                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column;">
+
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                            <div class="crawl-tag tag-{{ job.source.lower() }}" style="margin: 0; flex-shrink: 0;">{{ job.source }}</div>
+                            <h5 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ job.job }}">
+                                {{ job.job }}
+                            </h5>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main);">{{ job.name }}</p>
+                            <span class="d-day 
+                                {% if 'D-' in job.d_day and '마감' not in job.d_day %}
+                                    d-day-active
+                                {% else %}
+                                    d-day-normal
+                                {% endif %}
+                            ">
+                                {{ job.d_day }}
+                            </span>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0 0 15px 0; opacity: 0.6;">
+
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
+                                <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                                    <i class="fa-regular fa-calendar"></i> {{ job.period }}
+                                </span>
+                                <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                                    <i class="fa-solid fa-location-dot"></i> {{ job.location }}
+                                </span>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                                <a href="/company-analysis/{{ job.id }}"
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                    기업 분석
+                                </a>
+
+                                <a href="{{ job.url }}"
+                                target="_blank"
+                                style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if not recent_jobs %}
+                    <p style="color: var(--text-muted); padding: 20px;">현재 표시할 공고가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 사이드바 -->
+        <div class="sidebar-column">
+            <aside class="login-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 24px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); text-align: center;">
+                {% if user %}
+                    <div class="icon-box" style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(255, 178, 102, 0.12); color: var(--point-orange); display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                        <i class="fa-solid fa-chart-simple" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h5 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">기업 분석 서비스</h5>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                            추천 공고와 최신 공고를 기준으로<br>
+                            기업 분석 리포트를 확인할 수 있습니다.
+                        </p>
+                    </div>
+                    <div class="btn-container" style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button onclick="location.href='/profile'"
+                                style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;
+                                       background: #007bff; color: white; border: none; cursor: pointer;">
+                            마이페이지
+                        </button>
+                        <button onclick="location.href='/logout'" class="btn-logout"
+                                style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                            로그아웃
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="icon-box" style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(255, 178, 102, 0.12); color: var(--point-orange); display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                        <i class="fa-solid fa-user-lock" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <h5 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">로그인이 필요합니다</h5>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                            개인화된 추천 공고와 희망 직무 기반 분석은<br>
+                            로그인 후 확인하실 수 있습니다.
+                        </p>
+                    </div>
+                    <button onclick="location.href='/login'" class="btn-primary-custom" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 8px;">
+                        로그인하기
+                    </button>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+</div>
+
+<script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.innerHTML = newTheme === 'dark'
+            ? '<i class="fa-solid fa-moon"></i>'
+            : '<i class="fa-solid fa-sun"></i>';
+    });
+
+    if (localStorage.getItem('theme') === 'light') {
+        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    }
+</script>
+{% endblock %}

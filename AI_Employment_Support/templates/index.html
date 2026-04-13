@@ -24,6 +24,40 @@
         background: var(--point-red-bg) !important;
         transform: translateY(-1px);
     }
+    .site-chip {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    background: #f0f2f5;
+    color: #666;
+}
+
+.site-chip.active {
+    background: var(--accent);
+    color: white;
+    font-weight: 800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.d-day {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid currentColor;
+}
+
+.d-day-active {
+    background: #fff1f0;
+    color: #ff4d4f;
+}
+
+.d-day-normal {
+    background: #f5f5f5;
+    color: #8c8c8c;
+}
 </style>
 {% endblock %}
 
@@ -94,7 +128,16 @@
                                 </div>
                             </div>
                             
-                            <div style="flex-shrink: 0; margin-left: 20px;">
+                            <div style="flex-shrink: 0; margin-left: 20px; display: flex; gap: 8px;">
+                                <a href="/company-analysis/{{ job.id }}"
+                                style="padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                    기업 분석
+                                </a>
+                                <a href="/interview?job_id={{ job.id }}"
+                                style="padding: 10px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: #1677ff; color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                    AI 모의면접
+                                </a>
+
                                 <button class="btn-detail" onclick="window.open('{{ job.url }}', '_blank')" 
                                         style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;">
                                     공고 보기 <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
@@ -143,15 +186,13 @@
                         {% for s in sources %}
                         <a href="/?source={{ s }}" 
                         style="text-decoration: none !important; border: none; outline: none; white-space: nowrap;">
-                            <span class="site-chip chip-{{ 'default' if s == '전체' else s.lower() }}"
-                                style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; transition: all 0.2s;
-                                        {% if current_source == s %}
-                                            background: var(--accent); color: white; font-weight: 800; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                                        {% else %}
-                                            background: #f0f2f5; color: #666;
-                                        {% endif %}">
+                        
+                            <span class="site-chip 
+                                        chip-{{ 'default' if s == '전체' else s.lower() }}
+                                        {% if current_source == s %} active {% endif %}">
                                 {{ s }}
                             </span>
+
                         </a>
                         {% endfor %}
                     </div>
@@ -170,19 +211,25 @@
                         </div>
 
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main);">{{ job.name }}</p>
-                            <span style="font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; 
-                                        background: {% if 'D-' in job.d_day and '마감' not in job.d_day %}#fff1f0{% else %}#f5f5f5{% endif %}; 
-                                        color: {% if 'D-' in job.d_day and '마감' not in job.d_day %}#ff4d4f{% else %}#8c8c8c{% endif %}; 
-                                        border: 1px solid currentColor;">
+                            <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main);">
+                                {{ job.name }}
+                            </p>
+
+                            <span class="d-day 
+                                {% if job.d_day and 'D-' in job.d_day and '마감' not in job.d_day %}
+                                    d-day-active
+                                {% else %}
+                                    d-day-normal
+                                {% endif %}
+                            ">
                                 {{ job.d_day }}
                             </span>
                         </div>
 
                         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0 0 15px 0; opacity: 0.6;">
 
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
                                 <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
                                     <i class="fa-regular fa-calendar"></i> {{ job.period }}
                                 </span>
@@ -190,8 +237,25 @@
                                     <i class="fa-solid fa-location-dot"></i> {{ job.location }}
                                 </span>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                                <a href="/company-analysis/{{ job.id }}"
+                                onclick="event.stopPropagation();"
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                    기업 분석
+                                </a>
+                                <a href="/interview?job_id={{ job.id }}"
+                                onclick="event.stopPropagation();"
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                    AI 모의면접
+                                </a>
+
+                                <a href="{{ job.url }}"
+                                target="_blank"
+                                onclick="event.stopPropagation();"
+                                style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -301,7 +365,7 @@
                 </div>
             </div>
 
-            <div class="login-card service-card" style="cursor: pointer; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;" onclick="location.href='/cover-letter'">
+            <div class="login-card service-card" style="cursor: pointer; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;" onclick="location.href='/company-analysis'">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(255, 178, 102, 0.1); color: #FFB266; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
                         <i class="fa-solid fa-chart-simple"></i>

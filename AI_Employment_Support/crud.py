@@ -76,3 +76,48 @@ def get_ai_recommended_jobs(db: Session, user_id: str, limit: int = 4):
 
     scored_jobs.sort(key=lambda x: x.match_rate, reverse=True)
     return scored_jobs[:limit]
+
+from models import Enter, CompanyAnalysis
+
+
+def get_enter_jobs_for_analysis(db, limit=5):
+    return (
+        db.query(Enter)
+        .filter(Enter.name.isnot(None))
+        .order_by(Enter.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+
+def save_company_analysis(db, enter_id, company_name, job_description, news_data, report):
+    existing = (
+        db.query(CompanyAnalysis)
+        .filter(CompanyAnalysis.enter_id == enter_id)
+        .first()
+    )
+
+    if existing:
+        existing.company_name = company_name
+        existing.job_description = job_description
+        existing.news_data = news_data
+        existing.analysis_report = report
+    else:
+        new_data = CompanyAnalysis(
+            enter_id=enter_id,
+            company_name=company_name,
+            job_description=job_description,
+            news_data=news_data,
+            analysis_report=report
+        )
+        db.add(new_data)
+
+    db.commit()
+
+
+def get_company_analysis(db, enter_id):
+    return (
+        db.query(CompanyAnalysis)
+        .filter(CompanyAnalysis.enter_id == enter_id)
+        .first()
+    )

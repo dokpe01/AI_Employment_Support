@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}기업 분석{% endblock %}
+
+{% block extra_style %}
+<style>
+.page-wrap {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+}
+
+.hero-card, .analysis-card, .loading-card {
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    background: var(--card-bg);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
+}
+
+.hero-card {
+    padding: 28px;
+    margin-bottom: 22px;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.10), rgba(255, 178, 102, 0.10));
+}
+
+.summary-box {
+    margin-top: 16px;
+    padding: 18px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 178, 102, 0.45);
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.analysis-card {
+    padding: 22px;
+}
+
+.analysis-card.full {
+    grid-column: 1 / -1;
+}
+
+.analysis-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 12px 0;
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.analysis-title i {
+    color: var(--accent);
+    font-size: 0.95rem;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.analysis-body {
+    white-space: pre-wrap;
+    line-height: 1.9;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.loading-card {
+    padding: 42px 28px;
+    text-align: center;
+}
+
+.spinner {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 178, 102, 0.15);
+    border-top-color: #FFB266;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 18px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.step-item {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 0.92rem;
+}
+
+.step-item.active {
+    border-color: rgba(255, 178, 102, 0.45);
+    background: rgba(255, 178, 102, 0.08);
+    font-weight: 700;
+}
+
+.news-card {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--bg-main);
+    margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+    .section-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.action-footer {
+    margin-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.action-btn-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.btn-blue {
+    background: #1677ff;
+    color: white;
+}
+
+.btn-orange {
+    background: #FF8C42;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .action-footer {
+        justify-content: center;
+    }
+
+    .action-btn-group {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .action-btn-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .full-action-wrap {
+        padding: 0 20px;
+    }
+
+    .action-btn-group {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+.job-meta {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.job-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.job-meta-item i {
+    color: var(--text-main);
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar" style="background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+        <a class="navbar-brand" href="/" style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;">
+            <i class="fa-brands fa-openai" style="color: var(--accent);"></i>AI Employment Support
+        </a>
+        <button id="themeToggle" class="theme-toggle" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+</nav>
+<div id="page-root" data-enter-id="{{ enter_id }}"></div>
+<div class="page-wrap">
+    <button type="button" onclick="history.back()" style="margin-bottom: 18px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; color: var(--text-main); font-weight: 700; cursor: pointer;">
+        ← 공고 목록으로 돌아가기
+    </button>
+
+    <div class="hero-card">
+        <h1 style="margin: 0; font-size: 1.6rem; font-weight: 800;">{{ job.name }}</h1>
+        <p style="margin: 8px 0 0; color: var(--text-muted);">{{ job.job }}</p>
+        <div class="job-meta">
+            <span class="job-meta-item">
+                <i class="fa-solid fa-location-dot"></i> {{ job.location }}
+            </span>
+            <span class="job-meta-item">
+                <i class="fa-regular fa-calendar"></i> {{ job.period }}
+            </span>
+            <span class="crawl-tag tag-{{ job.source.lower() }}">
+                {{ job.source }}
+            </span>
+        </div>
+    </div>
+
+    <div id="loading-section" class="loading-card">
+        <div class="spinner"></div>
+        <h2 style="margin: 0 0 8px 0; font-size: 1.35rem; font-weight: 800;">기업 분석 리포트를 준비하고 있어요</h2>
+        <p style="margin: 0; color: var(--text-muted); line-height: 1.8;">
+            선택한 공고와 최신 뉴스 데이터를 바탕으로<br>
+            AI가 맞춤형 기업 분석을 생성하고 있습니다.
+        </p>
+
+        <div class="step-list">
+            <div class="step-item active" id="step1">1. 공고 정보 확인 중</div>
+            <div class="step-item" id="step2">2. 최신 뉴스 수집 중</div>
+            <div class="step-item" id="step3">3. AI 분석 리포트 작성 중</div>
+            <div class="step-item" id="step4">4. 결과 정리 중</div>
+        </div>
+    </div>
+
+    <div id="result-section" style="display:none;">
+        <div class="summary-box">
+            <div style="font-size: 0.78rem; font-weight: 800; color: #FFB266; margin-bottom: 8px;">AI 한 줄 요약</div>
+            <p id="summary-text" style="margin: 0; font-size: 1rem; line-height: 1.8; font-weight: 600; color: var(--text-main);"></p>
+        </div>
+        <div class="section-grid" style="margin-top: 22px;">
+            <div class="analysis-card">
+                <h3 class="analysis-title"><i class="fa-solid fa-building"></i> 기업 개요</h3>
+                <div id="company-overview" class="analysis-body"></div>
+            </div>
+
+            <div class="analysis-card">
+                <h3 class="analysis-title"><i class="fa-solid fa-chart-line"></i> 비즈니스 모멘텀</h3>
+                <div id="momentum" class="analysis-body"></div>
+            </div>
+
+            <div class="analysis-card">
+                <h3 class="analysis-title"><i class="fa-solid fa-bullseye"></i> 조직의 방향성과 목표</h3>
+                <div id="mission" class="analysis-body"></div>
+            </div>
+
+            <div class="analysis-card">
+                <h3 class="analysis-title"><i class="fa-solid fa-users"></i> 인재상 & 조직 문화</h3>
+                <div id="culture" class="analysis-body"></div>
+            </div>
+
+            <div class="analysis-card full">
+                <h3 class="analysis-title"><i class="fa-solid fa-lightbulb"></i> 분석가적 제언</h3>
+                <div id="strategy" class="analysis-body"></div>
+            </div>
+
+            <div class="analysis-card full" id="news-section" style="display:none;">
+                <h3 class="analysis-title"><i class="fa-regular fa-newspaper"></i> 분석에 활용된 뉴스</h3>
+                <div id="news-list"></div>
+            </div>
+        </div>
+    </div>
+    <div id="action-buttons" class="action-footer" style="display:none;">
+    <div class="action-btn-group">
+        <a href="/interview?job_id={{ job.id }}"
+           class="action-btn btn-blue">
+            AI 면접 준비하기
+        </a>
+
+        <a href="/cover-letter?job_id={{ job.id }}"
+           class="action-btn btn-orange">
+            자소서 작성하기
+        </a>
+    </div>
+</div>
+</div>
+
+<script>
+const enterId = document.getElementById("page-root").dataset.enterId;
+
+function activateStep(stepNumber) {
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step${i}`).classList.remove("active");
+    }
+    document.getElementById(`step${stepNumber}`).classList.add("active");
+}
+
+function setText(id, value) {
+    document.getElementById(id).textContent = value || "";
+}
+
+function renderNews(newsData) {
+    const newsSection = document.getElementById("news-section");
+    const newsList = document.getElementById("news-list");
+
+    if (!newsData || !newsData.length) {
+        newsSection.style.display = "none";
+        return;
+    }
+
+    newsSection.style.display = "block";
+    newsList.innerHTML = "";
+
+    newsData.forEach(news => {
+        const card = document.createElement("div");
+        card.className = "news-card";
+        card.innerHTML = `
+            <div style="font-weight: 800; margin-bottom: 8px; color: var(--text-main);">${news.title || ""}</div>
+            <div style="color: var(--text-muted); line-height: 1.8; font-size: 0.9rem;">${news.content || ""}</div>
+        `;
+        newsList.appendChild(card);
+    });
+}
+
+async function loadAnalysis() {
+    try {
+        setTimeout(() => activateStep(2), 700);
+        setTimeout(() => activateStep(3), 1600);
+        setTimeout(() => activateStep(4), 3000);
+
+        const response = await fetch(`/api/company-analysis/${enterId}`);
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            alert(data.message || "기업 분석 생성 중 오류가 발생했습니다.");
+            history.back();
+            return;
+        }
+
+        const analysis = data.analysis || {};
+
+        setText("summary-text", analysis.summary);
+        setText("company-overview", analysis.company_overview);
+        setText("momentum", analysis.momentum);
+        setText("mission", analysis.mission);
+        setText("culture", analysis.culture);
+        setText("strategy", analysis.strategy);
+
+        renderNews(data.news_data);
+
+        document.getElementById("loading-section").style.display = "none";
+        document.getElementById("result-section").style.display = "block";
+        document.getElementById("action-buttons").style.display = "flex";
+    } catch (error) {
+        alert("기업 분석 생성 중 오류가 발생했습니다.");
+        history.back();
+    }
+}
+
+loadAnalysis();
+</script>
+{% endblock %}

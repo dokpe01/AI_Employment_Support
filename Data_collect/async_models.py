@@ -23,3 +23,4 @@ class Enter(Base):
     source = Column(Text, nullable=False)
     career = Column(Text, nullable=True)
     collected_at = Column(Text, nullable=True)
+    content = Column(Text, nullable=True)

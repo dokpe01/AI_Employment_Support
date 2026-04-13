@@ -8,21 +8,48 @@
         --point-red: #ff4d4f;
         --point-red-bg: rgba(255, 77, 79, 0.06);
     }
+
     [data-theme='dark'] {
         --point-red: #ff7875;
         --point-red-bg: rgba(255, 120, 117, 0.1);
     }
+
     .btn-logout {
         background: transparent !important;
         color: var(--point-red) !important;
         border: 1px solid var(--point-red) !important;
         transition: all 0.2s ease;
     }
+
     .btn-logout:hover {
         background: var(--point-red-bg) !important;
         transform: translateY(-1px);
     }
-    /* 면접 카드 전용 내부 스타일 */
+
+    .main-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .main-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 300px !important;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .list-section {
+        min-width: 0;
+    }
+
+    .sidebar-column {
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
     .interview-main-card {
         background: var(--card-bg);
         border: 1px solid var(--border-color);
@@ -34,6 +61,7 @@
         justify-content: center;
         text-align: center;
     }
+
     .interview-textarea {
         width: 100%;
         height: 250px;
@@ -49,8 +77,41 @@
         outline: none;
         margin: 20px 0;
         text-align: left;
+        box-sizing: border-box;
     }
-    .interview-textarea:focus { border-color: var(--accent); }
+
+    .interview-textarea:focus {
+        border-color: var(--accent);
+    }
+
+    .interview-select {
+        width: 100%;
+        background: var(--bg-main);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        color: var(--text-main);
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .interview-select:focus {
+        border-color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+        .main-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .sidebar-column {
+            width: 100%;
+        }
+
+        .interview-main-card {
+            padding: 32px 20px;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -66,9 +127,8 @@
     </div>
 </nav>
 
-<div class="main-container" style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
-    <div class="main-grid" style="display: grid; grid-template-columns: 1fr 300px; gap: 30px;">
-        
+<div class="main-container">
+    <div class="main-grid">
         <div class="list-section">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
                 <div style="width: 4px; height: 24px; background: var(--accent); border-radius: 2px;"></div>
@@ -77,61 +137,188 @@
                     <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.85rem;">{{ itv_user_name }}님 맞춤 질문</p>
                 </div>
             </div>
-
             <div class="interview-main-card shadow-sm">
                 <div id="start-screen">
+                    {% if selected_job %}
+                    <div style="display: flex; justify-content: flex-start; margin-bottom: 18px;">
+                        <button
+                            type="button"
+                            onclick="history.back()"
+                            style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; color: var(--text-main); font-weight: 700; cursor: pointer;"
+                        >
+                            <i class="fa-solid fa-arrow-left"></i>
+                            공고 목록으로 돌아가기
+                        </button>
+                    </div>
+                    {% endif %}
                     <div style="width: 70px; height: 70px; background: rgba(56, 189, 248, 0.1); color: var(--accent); border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                         <i class="fa-solid fa-robot" style="font-size: 2rem;"></i>
                     </div>
+
                     <h3 style="font-weight: 800; color: var(--text-main); margin-bottom: 10px;">면접을 시작할 준비가 되셨나요?</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 35px;">실제 면접관처럼 AI가 질문을 던집니다. <br>답변을 입력하면 실시간 피드백을 받을 수 있습니다.</p>
-                    <button onclick="startInterview()" class="btn-primary-custom" style="padding: 15px 45px; border-radius: 10px; font-weight: 800; cursor: pointer;">시작하기</button>
+
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 35px; line-height: 1.7;">
+                        {% if selected_job %}
+                            현재 선택한 공고를 기준으로 AI가 맞춤형 면접 질문을 생성합니다.<br>
+                            답변 흐름을 바탕으로 면접 종료 후 종합 피드백을 제공합니다.
+                        {% else %}
+                            추천 공고를 선택하면 AI가 해당 공고를 바탕으로 맞춤형 면접 질문을 생성합니다.<br>
+                            답변 흐름을 바탕으로 면접 종료 후 종합 피드백을 제공합니다.
+                        {% endif %}
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 0 auto 28px; text-align: left;">
+                        {% if selected_job %}
+                            <label style="font-weight: 700; color: var(--text-main);">
+                                선택된 공고
+                            </label>
+
+                            <div style="border: 1px solid var(--accent); border-radius: 14px; padding: 18px; background: rgba(56, 189, 248, 0.08); text-align: left;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                    <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.16); padding: 4px 8px; border-radius: 999px;">
+                                        SELECTED JOB
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">
+                                        이 공고를 기준으로 면접 질문이 생성됩니다
+                                    </span>
+                                </div>
+
+                                <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-main); margin-bottom: 6px;">
+                                    {{ selected_job.name }}
+                                </div>
+
+                                <div style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 8px;">
+                                    {{ selected_job.job }}
+                                </div>
+
+                                <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 12px;">
+                                    <span><i class="fa-solid fa-location-dot"></i> {{ selected_job.location }}</span>
+                                    <span><i class="fa-regular fa-calendar"></i> {{ selected_job.period }}</span>
+                                    <span><i class="fa-solid fa-hourglass-half"></i> {{ selected_job.d_day }}</span>
+                                </div>
+                            </div>
+
+                            <p style="margin: 4px 0 0; font-size: 0.83rem; color: var(--text-muted);">
+                                공고 선택은 이미 완료되었습니다. 자소서만 입력하면 바로 면접을 시작할 수 있습니다.
+                            </p>
+
+                            <input type="hidden" id="selected-job-id" value="{{ selected_job.id }}" />
+
+                        {% else %}
+                            <label for="job-select" style="font-weight: 700; color: var(--text-main);">
+                                추천 공고 선택
+                            </label>
+
+                            <select id="job-select" class="interview-select">
+                                <option value="">공고를 선택하세요</option>
+                                {% for job in job_list %}
+                                    <option value="{{ job.id }}">
+                                        {{ job.name }} | {{ job.job }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+
+                        <textarea
+                            id="resume-content"
+                            class="interview-textarea"
+                            placeholder="자소서 또는 이력서 내용을 입력해주세요."
+                            style="height: 220px; margin: 0;"
+                        ></textarea>
+                    </div>
+
+                    <button onclick="startInterview()" class="btn-primary-custom" style="padding: 15px 45px; border-radius: 10px; font-weight: 800; cursor: pointer;">
+                        시작하기
+                    </button>
                 </div>
 
                 <div id="interview-screen" style="display: none; text-align: left;">
-                    <h4 id="question-text" style="font-weight: 800; color: var(--text-main); font-size: 1.3rem; line-height: 1.5; margin-bottom: 20px;">질문을 생성 중...</h4>
+                    {% if selected_job %}
+                    <div style="margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent); background: rgba(56, 189, 248, 0.12); padding: 4px 8px; border-radius: 999px;">
+                            {{ selected_job.name }}
+                        </span>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">
+                            {{ selected_job.job }}
+                        </span>
+                    </div>
+                    {% endif %}
+                    <h4 id="question-text" style="font-weight: 800; color: var(--text-main); font-size: 1.3rem; line-height: 1.5; margin-bottom: 20px;">
+                        질문을 생성 중...
+                    </h4>
+
                     <textarea id="answer-area" class="interview-textarea" placeholder="이곳에 답변을 입력해주세요..."></textarea>
+
                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button onclick="location.reload()" style="padding: 12px 25px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); border-radius: 10px; font-weight: 600; cursor: pointer;">그만두기</button>
-                        <button onclick="submitAnswer()" class="btn-primary-custom" style="padding: 12px 35px; border-radius: 10px; font-weight: 700; width: auto; cursor: pointer;">답변 제출 <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i></button>
+                        <button onclick="location.reload()" style="padding: 12px 25px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); border-radius: 10px; font-weight: 600; cursor: pointer;">
+                            그만두기
+                        </button>
+                        <button onclick="submitAnswer()" class="btn-primary-custom" style="padding: 12px 35px; border-radius: 10px; font-weight: 700; width: auto; cursor: pointer;">
+                            답변 제출 <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+                        </button>
+                    </div>
+
+                    <div id="final-feedback" style="display: none; margin-top: 24px; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-main);">
+                        <h4 style="margin: 0 0 14px 0; font-weight: 800; color: var(--text-main);">면접 종합 피드백</h4>
+                        <div id="final-feedback-content" style="color: var(--text-main); line-height: 1.7;"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="sidebar-column" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="sidebar-column">
             <aside class="login-card" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px 24px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); text-align: center;">
                 <div class="icon-box" style="width: 48px; height: 48px; margin: 0 auto 16px; background: rgba(56, 189, 248, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; border-radius: 10px;">
                     <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
                 </div>
                 <div style="margin-bottom: 24px;">
                     <h5 style="margin: 0 0 6px 0; font-size: 1rem; font-weight: 700; color: var(--text-main);">반갑습니다, {{ itv_user_name }}님!</h5>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">AI 실시간 면접 모드입니다.</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                        추천 공고 기반 AI 모의 면접 모드입니다.
+                    </p>
                 </div>
                 <div class="btn-container" style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button onclick="location.href='/profile'" style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: #007bff; color: white; border: none; cursor: pointer;">마이페이지</button>
-                    <button onclick="location.href='/logout'" class="btn-logout" style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">로그아웃</button>
+                    <button onclick="location.href='/profile'" style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; background: #007bff; color: white; border: none; cursor: pointer;">
+                        마이페이지
+                    </button>
+                    <button onclick="location.href='/logout'" class="btn-logout" style="flex: 1; height: 42px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                        로그아웃
+                    </button>
                 </div>
             </aside>
 
             <div class="login-card service-card" style="cursor: pointer; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;" onclick="location.href='/interview'">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.1); color: var(--accent); border-radius: 8px;"><i class="fa-solid fa-comments"></i></div>
-                    <div><h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 모의 면접</h5><p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">실시간 면접 피드백</p></div>
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.1); color: var(--accent); border-radius: 8px;">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 모의 면접</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">추천 공고 기반 종합 피드백</p>
+                    </div>
                 </div>
             </div>
 
             <div class="login-card service-card" style="cursor: pointer; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;" onclick="location.href='/cover-letter'">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><i class="fa-solid fa-pen-nib"></i></div>
-                    <div><h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 자소서 작성</h5><p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">맞춤형 자소서 생성</p></div>
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">AI 자소서 작성</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">맞춤형 자소서 생성</p>
+                    </div>
                 </div>
             </div>
 
             <div class="login-card service-card" style="cursor: pointer; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;" onclick="location.href='/company-analysis'">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(255, 178, 102, 0.1); color: #FFB266; display: flex; align-items: center; justify-content: center; border-radius: 8px;"><i class="fa-solid fa-chart-simple"></i></div>
-                    <div><h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">기업 분석</h5><p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">기업 분석 리포트</p></div>
+                    <div class="icon-box" style="width: 40px; height: 40px; font-size: 1.1rem; background: rgba(255, 178, 102, 0.1); color: #FFB266; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700;">기업 분석</h5>
+                        <p style="margin: 3px 0 0; font-size: 0.75rem; color: var(--text-muted);">기업 분석 리포트</p>
+                    </div>
                 </div>
             </div>
 
@@ -158,31 +345,225 @@
                     </div>
                 </div>
             </div>
-            
-            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    // 테마 토글
     const themeToggle = document.getElementById('themeToggle');
     const html = document.documentElement;
+
     themeToggle.addEventListener('click', () => {
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+        themeToggle.innerHTML = newTheme === 'dark'
+            ? '<i class="fa-solid fa-moon"></i>'
+            : '<i class="fa-solid fa-sun"></i>';
     });
 
-    // 면접 기능 제어
-    function startInterview() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('interview-screen').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('question-text').innerText = "웹 페이지에서 다크 모드를 구현할 때, CSS 변수(Custom Properties)를 사용하는 방식의 이점에 대해 설명해주세요.";
-        }, 800);
+    let interviewSessionId = null;
+    let interviewFinished = false;
+    let isSubmitting = false;
+
+    const startScreen = document.getElementById('start-screen');
+    const interviewScreen = document.getElementById('interview-screen');
+    const questionText = document.getElementById('question-text');
+    const answerArea = document.getElementById('answer-area');
+    const finalFeedback = document.getElementById('final-feedback');
+    const finalFeedbackContent = document.getElementById('final-feedback-content');
+
+    async function startInterview() {
+    const selectedJobInput = document.getElementById("selected-job-id");
+    const jobSelect = document.getElementById("job-select");
+
+    let jobId = "";
+
+    if (selectedJobInput) {
+        jobId = selectedJobInput.value;
+    } else if (jobSelect) {
+        jobId = jobSelect.value;
     }
-    function submitAnswer() { alert("답변이 전송되었습니다."); }
+
+    const resume = document.getElementById('resume-content')?.value?.trim() || "";
+
+    if (!jobId) {
+        alert("공고를 선택해주세요.");
+        return;
+    }
+
+    if (!resume) {
+        alert("자소서 또는 이력서 내용을 입력해주세요.");
+        return;
+    }
+
+    try {
+        questionText.innerText = "질문을 생성 중입니다...";
+        startScreen.style.display = 'none';
+        interviewScreen.style.display = 'block';
+        finalFeedback.style.display = 'none';
+        finalFeedbackContent.innerHTML = "";
+        interviewFinished = false;
+
+        const response = await fetch('/api/interview/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                job_id: Number(jobId),
+                resume: resume
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("startInterview error:", errorText);
+            alert("면접 시작 중 오류가 발생했습니다.");
+            startScreen.style.display = 'block';
+            interviewScreen.style.display = 'none';
+            return;
+        }
+
+        const data = await response.json();
+        interviewSessionId = data.session_id;
+        interviewFinished = !!data.is_finished;
+        questionText.innerText = data.message || "첫 질문을 불러오지 못했습니다.";
+        answerArea.value = "";
+        answerArea.focus();
+
+    } catch (error) {
+        console.error("startInterview exception:", error);
+        alert("면접 시작 중 오류가 발생했습니다.");
+        startScreen.style.display = 'block';
+        interviewScreen.style.display = 'none';
+    }
+}
+
+    async function submitAnswer() {
+        if (!interviewSessionId) {
+            alert("먼저 면접을 시작해주세요.");
+            return;
+        }
+
+        if (interviewFinished) {
+            alert("면접이 이미 종료되었습니다.");
+            return;
+        }
+
+        if (isSubmitting) {
+            return;
+        }
+
+        const answer = answerArea.value.trim();
+        if (!answer) {
+            alert("답변을 입력해주세요.");
+            return;
+        }
+
+        try {
+            isSubmitting = true;
+            questionText.innerText = "다음 질문을 준비 중입니다...";
+
+            const response = await fetch(`/api/interview/${interviewSessionId}/answer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: answer
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("submitAnswer error:", errorText);
+                alert("답변 제출 중 오류가 발생했습니다.");
+                questionText.innerText = "오류가 발생했습니다. 다시 시도해주세요.";
+                return;
+            }
+
+            const data = await response.json();
+            interviewFinished = !!data.is_finished;
+            answerArea.value = "";
+
+            if (interviewFinished) {
+                questionText.innerText = data.message || "면접이 종료되었습니다.";
+                await loadFinalFeedback();
+                return;
+            }
+
+            questionText.innerText = data.message || "다음 질문을 불러오지 못했습니다.";
+            answerArea.focus();
+
+        } catch (error) {
+            console.error("submitAnswer exception:", error);
+            alert("답변 제출 중 오류가 발생했습니다.");
+            questionText.innerText = "오류가 발생했습니다. 다시 시도해주세요.";
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function loadFinalFeedback() {
+        if (!interviewSessionId) return;
+
+        try {
+            finalFeedback.style.display = 'block';
+            finalFeedbackContent.innerHTML = "<p>종합 피드백을 생성하고 있습니다...</p>";
+
+            const response = await fetch(`/api/interview/${interviewSessionId}/finish`, {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("loadFinalFeedback error:", errorText);
+                finalFeedbackContent.innerHTML = "<p>종합 피드백 생성 중 오류가 발생했습니다.</p>";
+                return;
+            }
+
+            const data = await response.json();
+
+            finalFeedbackContent.innerHTML = `
+                <p><strong>총평</strong><br>${escapeHtml(data.overall_summary || "")}</p>
+
+                <p style="margin-top: 16px;"><strong>강점</strong></p>
+                <ul>
+                    ${(data.strengths || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+
+                <p style="margin-top: 16px;"><strong>보완점</strong></p>
+                <ul>
+                    ${(data.weaknesses || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+
+                <p style="margin-top: 16px;"><strong>개선 방향</strong></p>
+                <ul>
+                    ${(data.improvements || []).map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+
+                <p style="margin-top: 16px;"><strong>답변 팁</strong><br>${escapeHtml(data.sample_answer_tip || "")}</p>
+            `;
+
+        } catch (error) {
+            console.error("loadFinalFeedback exception:", error);
+            finalFeedbackContent.innerHTML = "<p>종합 피드백 생성 중 오류가 발생했습니다.</p>";
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text ?? "";
+        return div.innerHTML;
+    }
+
+    answerArea.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitAnswer();
+        }
+    });
 </script>
 {% endblock %}

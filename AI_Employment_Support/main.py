@@ -18,6 +18,15 @@ import fitz
 import pydantic
 import json
 from openai import OpenAI
+from database import get_db,SessionLocal
+import crud
+from models import Enter
+from analysis.company_service import (
+    get_company_news_data,
+    generate_company_analysis
+)
+from interview.api import router as interview_router
+from cover_letter.api import router as cover_letter_router
 
 try:
     from database import engine, SessionLocal
@@ -30,6 +39,8 @@ load_dotenv(encoding="utf-8")
 KIT_ID = os.getenv("FA_KIT_ID")
 client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
+app.include_router(interview_router, prefix="/api/interview")
+app.include_router(cover_letter_router, prefix="/api/cover-letter")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -279,30 +290,53 @@ async def update_profile(
     return RedirectResponse(url="/profile", status_code=303)
 
 @app.get("/interview", response_class=HTMLResponse)
-async def interview_page(request: Request):
+async def interview_page(
+    request: Request,
+    job_id: int = None,
+    db: Session = Depends(get_db)
+):
     token = request.cookies.get("access_token")
     if not token:
         return RedirectResponse(url="/login", status_code=302)
 
     try:
         token_value = str(token).replace("Bearer ", "").strip()
-        
         payload = jwt.get_unverified_claims(token_value)
         u_name = str(payload.get("user_name", "사용자"))
 
+        selected_job = None
+        job_list = []
+
+        print("DEBUG job_id:", job_id)
+
+        if job_id:
+            selected_job = db.query(models.Enter).filter(models.Enter.id == job_id).first()
+            print("DEBUG selected_job:", selected_job)
+
+            if not selected_job:
+                return RedirectResponse(url="/", status_code=302)
+        else:
+            job_list, _ = crud.get_recent_enters(
+                db,
+                page=1,
+                size=30,
+                source="전체"
+            )
+
         template = templates.get_template("interview.html")
-        
         content = template.render({
             "request": request,
             "itv_user_name": u_name,
-            "kit_id": KIT_ID
+            "kit_id": KIT_ID,
+            "selected_job": selected_job,
+            "job_list": job_list,
         })
-        
+
         return HTMLResponse(content=content)
 
     except Exception as e:
-        print(f"DEBUG: FATAL_ERROR_LOG -> {type(e).__name__}: {str(e)}")
-        return RedirectResponse(url="/login", status_code=302)
+        print(f"DEBUG interview_page ERROR -> {type(e).__name__}: {e}")
+        raise e
 
 def extract_layout_structured_data(file_content):
     doc = fitz.open(stream=file_content, filetype="pdf")
@@ -379,3 +413,139 @@ async def save_resume(
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
+@app.get("/analysis/{job_id}")
+def read_analysis(job_id: int, db=Depends(get_db)):
+    result = crud.get_company_analysis(db, job_id)
+    if not result:
+        return {"message": "분석 없음"}
+    return result
+
+@app.get("/company-analysis/{enter_id}", response_class=HTMLResponse)
+async def company_analysis_page(
+    enter_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    job = db.query(Enter).filter(Enter.id == enter_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="공고를 찾을 수 없습니다.")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="company_analysis.html",
+        context={
+            "job": job,
+            "enter_id": enter_id,
+            "kit_id": KIT_ID,
+        }
+    )
+
+@app.get("/api/company-analysis/{enter_id}")
+async def company_analysis_api(enter_id: int, db: Session = Depends(get_db)):
+    job = db.query(Enter).filter(Enter.id == enter_id).first()
+    if not job:
+        return JSONResponse(status_code=404, content={"message": "공고를 찾을 수 없습니다."})
+
+    analysis = crud.get_company_analysis(db, enter_id)
+
+    if not analysis:
+        news = get_company_news_data(job.name)
+
+        job_description = job.content if job.content else f"""
+기업명: {job.name}
+직무: {job.job}
+주요업무: {job.work or '미기재'}
+자격요건: {job.qual or '미기재'}
+"""
+
+        report = await generate_company_analysis(job.name, job_description, news)
+        crud.save_company_analysis(db, enter_id, job.name, job_description, news, report)
+        analysis = crud.get_company_analysis(db, enter_id)
+
+    analysis_data = {}
+    if analysis and analysis.analysis_report:
+        if isinstance(analysis.analysis_report, str):
+            try:
+                analysis_data = json.loads(analysis.analysis_report)
+            except Exception:
+                analysis_data = {}
+        elif isinstance(analysis.analysis_report, dict):
+            analysis_data = analysis.analysis_report
+
+    return {
+        "success": True,
+        "job": {
+            "id": job.id,
+            "name": job.name,
+            "job": job.job,
+            "location": job.location,
+            "period": job.period,
+            "source": job.source
+        },
+        "analysis": analysis_data,
+        "news_data": analysis.news_data if analysis else []
+    }
+
+@app.get("/company-analysis", response_class=HTMLResponse)
+async def company_analysis_list_page(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    user = None
+    user_id = None
+    recommended_jobs = []
+    desired_roles = ""
+
+    if token:
+        try:
+            token_value = token.split(" ")[1]
+            payload = jwt.decode(token_value, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
+            user_id = payload.get("sub")
+            user = {"name": payload.get("user_name")}
+
+            db_user = db.query(models.User).filter(models.User.id == user_id).first()
+            if db_user:
+                desired_roles = db_user.job or ""
+
+            if user_id:
+                all_recommended = crud.get_ai_recommended_jobs(db, user_id=user_id)
+                recommended_jobs = [job for job in all_recommended if job.match_rate >= 60]
+
+        except (JWTError, IndexError, AttributeError):
+            user = None
+            desired_roles = ""
+
+    recent_jobs, _ = crud.get_recent_enters(db, page=1, size=30, source="전체")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="company_analysis_list.html",
+        context={
+            "kit_id": KIT_ID,
+            "user": user,
+            "desired_roles": desired_roles,
+            "recommended_jobs": recommended_jobs,
+            "recent_jobs": recent_jobs,
+        }
+    )
+
+@app.get("/cover-letter", response_class=HTMLResponse)
+async def cover_letter_page(
+    request: Request,
+    job_id: int = None,
+    db: Session = Depends(get_db)
+):
+    selected_job = None
+
+    if job_id:
+        selected_job = db.query(models.Enter).filter(models.Enter.id == job_id).first()
+        if not selected_job:
+            return RedirectResponse(url="/", status_code=302)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="cover_letter.html",
+        context={
+            "kit_id": KIT_ID,
+            "selected_job": selected_job,
+        }
+    )
