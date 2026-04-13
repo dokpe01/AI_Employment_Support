@@ -33,9 +33,14 @@ try:
 except ImportError:
     from .database import engine, SessionLocal
 
-models.Base.metadata.create_all(bind=engine)
+try:
+    models.Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print("DB init error:", e)
 
-load_dotenv(encoding="utf-8")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 KIT_ID = os.getenv("FA_KIT_ID")
 client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
@@ -411,9 +416,6 @@ async def save_resume(
 # for model in client.models.list():
 #     print(f"사용 가능한 모델명: {model.name}")
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
-
 @app.get("/analysis/{job_id}")
 def read_analysis(job_id: int, db=Depends(get_db)):
     result = crud.get_company_analysis(db, job_id)
@@ -549,3 +551,8 @@ async def cover_letter_page(
             "selected_job": selected_job,
         }
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)

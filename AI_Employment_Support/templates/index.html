@@ -13,7 +13,17 @@
         --point-red: #ff7875;
         --point-red-bg: rgba(255, 120, 117, 0.1);
     }
+    .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 30px;
+    }
 
+    .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
     .btn-logout {
         background: transparent !important;
         color: var(--point-red) !important;
@@ -200,63 +210,84 @@
 
                 <div class="crawling-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
                     {% for job in recent_jobs %}
-                    <div class="crawl-item" onclick="window.open('{{ job.url }}', '_blank')" 
-                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: transform 0.2s; cursor: pointer; display: flex; flex-direction: column;">
-                        
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                            <div class="crawl-tag tag-{{ job.source.lower() }}" style="margin: 0; flex-shrink: 0;">{{ job.source }}</div>
+                    <div class="crawl-item" onclick="window.open('{{ job.url }}', '_blank')"
+                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: transform 0.2s; cursor: pointer; display: flex; flex-direction: column; min-height: 250px;">
+
+                        <!-- 상단: 사이트 / 직무 -->
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; min-width: 0;">
+                            <div class="crawl-tag tag-{{ job.source.lower() }}" style="margin: 0; flex-shrink: 0;">
+                                {{ job.source }}
+                            </div>
                             <h5 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ job.job }}">
                                 {{ job.job }}
                             </h5>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main);">
+                        <!-- 회사명 / D-day -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 15px;">
+                            <p style="margin: 0; font-size: 0.9rem; font-weight: 600; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 {{ job.name }}
                             </p>
 
-                            <span class="d-day 
+                            <span class="d-day
                                 {% if job.d_day and 'D-' in job.d_day and '마감' not in job.d_day %}
                                     d-day-active
                                 {% else %}
                                     d-day-normal
                                 {% endif %}
-                            ">
+                            " style="flex-shrink: 0;">
                                 {{ job.d_day }}
                             </span>
                         </div>
 
                         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0 0 15px 0; opacity: 0.6;">
 
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 12px;">
-                            <div style="display: flex; flex-direction: column; gap: 5px; min-width: 0;">
-                                <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
-                                    <i class="fa-regular fa-calendar"></i> {{ job.period }}
-                                </span>
-                                <span style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
-                                    <i class="fa-solid fa-location-dot"></i> {{ job.location }}
-                                </span>
+                        <!-- 하단: 날짜/주소와 버튼을 분리 -->
+                        <div style="display: flex; flex-direction: column; gap: 14px; margin-top: auto;">
+
+                            <!-- 날짜 / 주소 -->
+                            <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0;">
+                                    <i class="fa-regular fa-calendar"
+                                    style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; flex-shrink: 0;"></i>
+                                    <span style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; word-break: keep-all;">
+                                        {{ job.period if job.period else '모집기간 미정' }}
+                                    </span>
+                                </div>
+
+                                <div style="display: flex; align-items: flex-start; gap: 8px; min-width: 0;">
+                                    <i class="fa-solid fa-location-dot"
+                                    style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; flex-shrink: 0;"></i>
+                                    <span style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; word-break: keep-all;">
+                                        {{ job.location if job.location else '근무지 미정' }}
+                                    </span>
+                                </div>
+
                             </div>
 
-                            <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                            <!-- 버튼 영역 -->
+                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
                                 <a href="/company-analysis/{{ job.id }}"
                                 onclick="event.stopPropagation();"
-                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 7px 11px; border-radius: 8px; background: rgba(255, 178, 102, 0.12); color: #FFB266; border: 1px solid rgba(255, 178, 102, 0.45); text-decoration: none; font-size: 0.78rem; font-weight: 700;">
                                     기업 분석
                                 </a>
+
                                 <a href="/interview?job_id={{ job.id }}"
                                 onclick="event.stopPropagation();"
-                                style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-size: 0.8rem; font-weight: 700;">
+                                style="display: inline-flex; align-items: center; justify-content: center; padding: 7px 11px; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-size: 0.78rem; font-weight: 700;">
                                     AI 모의면접
                                 </a>
 
                                 <a href="{{ job.url }}"
                                 target="_blank"
                                 onclick="event.stopPropagation();"
-                                style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2px;">
+                                style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: var(--text-muted); text-decoration: none; border-radius: 8px;">
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 </a>
                             </div>
+
                         </div>
                     </div>
                     {% endfor %}
