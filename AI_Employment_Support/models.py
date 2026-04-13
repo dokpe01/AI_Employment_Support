@@ -1,11 +1,9 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, Text, Boolean, JSON
 
 try:
     from database import Base
 except ImportError:
     from .database import Base
-Base = declarative_base()
 
 class Enter(Base):
     __tablename__ = "Enter"
@@ -25,6 +23,7 @@ class Enter(Base):
     source = Column(Text, nullable=False)
     career = Column(Text, nullable=True)
     collected_at = Column(Text, nullable=True)
+    content = Column(Text, nullable=True)
 
 class User(Base):
     __tablename__ = "User"
@@ -38,3 +37,14 @@ class User(Base):
     email = Column(Text, nullable=False)
     phone = Column(String(20), nullable=False)
     name = Column(String(50), nullable=False)
+
+class CompanyAnalysis(Base):
+    __tablename__ = "company_analysis"
+
+    id = Column(Integer, primary_key=True, index=True)
+    enter_id = Column(Integer, unique=True)
+    company_name = Column(String)
+    job_description = Column(Text)
+    news_data = Column(JSON)
+    analysis_report = Column(JSON)
+    created_at = Column(Text)

@@ -39,3 +39,16 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python Data_collect/auto_crawl.py
       
+      - name: Upload crawling output artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: crawling-output-${{ github.run_number }}
+          path: |
+            run_outputs/
+            data/total_site_link_final.json
+            data/refined_data.json
+            data/ocr_data.json
+            data/LLM_data.json
+          if-no-files-found: warn
+          retention-days: 7

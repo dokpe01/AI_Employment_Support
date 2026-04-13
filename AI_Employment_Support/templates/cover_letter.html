@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %}AI 자소서 작성{% endblock %}
+
+{% block content %}
+<nav class="navbar" style="background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px 0; position: sticky; top: 0; z-index: 100;">
+    <div class="container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+        <a class="navbar-brand" href="/" style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;">
+            <i class="fa-brands fa-openai" style="color: var(--accent);"></i>AI Employment Support
+        </a>
+        <button id="themeToggle" class="theme-toggle" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </div>
+</nav>
+<div id="page-root" data-job-id="{{ selected_job.id if selected_job else 0 }}"></div>
+<div class="page-wrap">
+    <div class="back-row">
+    <button type="button" class="back-btn" onclick="history.back()">
+            <i class="fa-solid fa-arrow-left"></i>
+            이전 페이지로 돌아가기
+        </button>
+    </div>
+    {% if selected_job %}
+    <div class="job-summary-card">
+        <div class="job-summary-top">
+            <div>
+                <h2>{{ selected_job.name }}</h2>
+                <p>{{ selected_job.job }}</p>
+            </div>
+
+            <span class="crawl-tag tag-{{ selected_job.source.lower() }}">
+                {{ selected_job.source }}
+            </span>
+        </div>
+
+        <div class="job-meta">
+            <span class="job-meta-item">
+                <i class="fa-solid fa-location-dot"></i> {{ selected_job.location }}
+            </span>
+            <span class="job-meta-item">
+                <i class="fa-regular fa-calendar"></i> {{ selected_job.period }}
+            </span>
+        </div>
+    </div>
+    {% endif %}
+    <div class="section-card">
+        <div class="section-head">
+            <h3><i class="fa-solid fa-pen-to-square"></i> 자소서 작성을 위한 경험 입력</h3>
+            <p>프로젝트, 실무 경험, 사용 기술, 문제 해결 경험을 입력해주세요.</p>
+        </div>
+
+        <textarea id="resume" class="editor-textarea"
+            placeholder="예: Python과 FastAPI를 활용해 채용공고 분석 시스템을 개발했습니다. PostgreSQL DB를 연동했고, GitHub Actions 기반 자동화 크롤링도 경험했습니다."></textarea>
+
+        <div class="action-row">
+            <button type="button" class="btn-secondary"
+                onclick="document.getElementById('resume').value=''">
+                초기화
+            </button>
+
+            <button type="button" class="btn-primary-orange"
+                onclick="generateCoverLetter()">
+                자소서 생성하기
+            </button>
+        </div>
+    </div>
+    <div id="result-section" class="section-card result-card" style="display:none;">
+        <div class="result-header">
+            <div>
+                <h3><i class="fa-solid fa-file-lines"></i> 생성된 자소서</h3>
+                <p>전략별 초안을 비교해보고 가장 적합한 문장을 선택하세요.</p>
+            </div>
+
+            <button type="button" class="btn-secondary" onclick="copyCoverLetter()">
+                복사하기
+            </button>
+        </div>
+
+        <div id="version-tabs" class="version-tabs"></div>
+        <div id="cover-letter-output" class="cover-letter-output"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_style %}
+<style>
+.page-wrap {
+    max-width: 980px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+}
+
+.job-summary-card,
+.section-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.04);
+}
+
+.job-summary-card {
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(255, 178, 102, 0.10));
+}
+
+.job-summary-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.job-summary-top h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+.job-meta {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.job-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    /* 🔥 핵심: 박스 제거 */
+    padding: 0;
+    border: none;
+    background: none;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.job-meta-item i {
+    color: var(--text-main);
+    font-size: 0.85rem;
+}
+.editor-textarea {
+    width: 100%;
+    min-height: 220px;
+    margin-top: 18px;
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.action-row {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    cursor: pointer;
+}
+
+.btn-primary-orange {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #FF8C42;
+    color: white;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
+.version-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.version-tab {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.version-tab.active {
+    background: rgba(255,140,66,0.15);
+    color: #FF8C42;
+}
+
+.cover-letter-output {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 18px;
+    white-space: pre-wrap;
+    line-height: 1.8;
+}
+.back-row {
+    margin-bottom: 18px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-main);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(0, 0, 0, 0.03);
+}
+</style>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+let coverLetterVersions = [];
+let activeIndex = 0;
+
+function renderTabs() {
+    const container = document.getElementById("version-tabs");
+    container.innerHTML = "";
+
+    coverLetterVersions.forEach((v, i) => {
+        const btn = document.createElement("button");
+        btn.className = "version-tab" + (i === activeIndex ? " active" : "");
+        btn.textContent = `${v.version}`;
+        btn.onclick = () => {
+            activeIndex = i;
+            renderTabs();
+            renderOutput();
+        };
+        container.appendChild(btn);
+    });
+}
+
+function renderOutput() {
+    const el = document.getElementById("cover-letter-output");
+    el.textContent = coverLetterVersions[activeIndex]?.final || "";
+}
+
+function copyCoverLetter() {
+    const text = coverLetterVersions[activeIndex]?.final;
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    alert("복사 완료");
+}
+
+async function generateCoverLetter() {
+    const resume = document.getElementById("resume").value.trim();
+    if (!resume) return alert("내용 입력");
+
+    const jobId = Number(
+    document.getElementById("page-root").dataset.jobId
+    );
+
+    const payload = {
+        job_id: jobId,
+        resume_json: {
+            name: "",
+            experiences: [resume]
+        }
+    }
+
+    document.getElementById("result-section").style.display = "block";
+    document.getElementById("cover-letter-output").textContent = "생성 중...";
+
+    const res = await fetch("/api/cover-letter/generate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    coverLetterVersions = data.validated_cover_letters || [];
+    activeIndex = 0;
+
+    renderTabs();
+    renderOutput();
+}
+</script>
+{% endblock %}
