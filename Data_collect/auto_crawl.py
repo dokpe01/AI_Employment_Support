@@ -225,7 +225,7 @@ async def run_total_automation(user_id):
 if __name__ == "__main__":
     print(f"자동화 작업을 시작합니다: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     try:
-        asyncio.run(run_total_automation("skdud1"))
+        asyncio.run(run_total_automation("qwer"))
     except Exception as e:
         print(f"에러 발생: {e}")
         exit(1)
