@@ -33,9 +33,14 @@ try:
 except ImportError:
     from .database import engine, SessionLocal
 
-models.Base.metadata.create_all(bind=engine)
+try:
+    models.Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print("DB init error:", e)
 
-load_dotenv(encoding="utf-8")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 KIT_ID = os.getenv("FA_KIT_ID")
 client = OpenAI(api_key=os.getenv("OPENAI"))
 app = FastAPI()
