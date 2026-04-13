@@ -416,9 +416,6 @@ async def save_resume(
 # for model in client.models.list():
 #     print(f"사용 가능한 모델명: {model.name}")
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
-
 @app.get("/analysis/{job_id}")
 def read_analysis(job_id: int, db=Depends(get_db)):
     result = crud.get_company_analysis(db, job_id)
@@ -554,3 +551,8 @@ async def cover_letter_page(
             "selected_job": selected_job,
         }
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
